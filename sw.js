@@ -1,6 +1,6 @@
 // Hors ligne : on essaie d'abord le réseau (pour avoir la dernière version), sinon la copie en cache.
-const CACHE='harf-aspi-v1';
-const FILES=['./','./index.html','./arabe/','./arabe/index.html','./copte/','./copte/index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png'];
+const CACHE='harf-aspi-v2';
+const FILES=['./','./index.html','./arabe.html','./copte.html','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{
