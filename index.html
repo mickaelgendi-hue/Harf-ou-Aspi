@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#b4532a">
+<link rel="icon" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<meta name="color-scheme" content="light only">
+<title>Aspi — Apprendre le copte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Coptic&family=Noto+Naskh+Arabic&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f4f0e6;--card:#fffdf8;--ink:#1d2236;--muted:#6b6f7c;--line:#e2dccd;--main:#283b8f;--main-soft:#e1e6f7;--gold:#c08a24;--gold-soft:#f5e8cc;--red:#b4473a;--green:#2f7d4f;--radius:16px;color-scheme:light only}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:16px;line-height:1.5}
+.cop{font-family:"Noto Sans Coptic","Antinoou",serif;line-height:1.4}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:700;margin:0 0 .4em}
+button{font:inherit;cursor:pointer;color:var(--ink)}
+a{color:var(--main)}
+.switch{flex:none;display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:600;text-decoration:none;color:#fff;white-space:nowrap}
+.switch:hover{opacity:.9}
+header{position:sticky;top:0;z-index:10;background:rgba(244,240,230,.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.bar{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:10px 18px;position:relative}
+.logo{display:flex;align-items:center;gap:8px;font-family:Fraunces,serif;font-weight:700;font-size:20px;white-space:nowrap;text-decoration:none;color:var(--ink)}
+.logo .cop{font-size:24px;color:var(--main)}
+nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+nav::-webkit-scrollbar{display:none}
+nav a{padding:8px 11px;border-radius:999px;color:var(--muted);text-decoration:none;font-weight:500;white-space:nowrap;font-size:15px}
+nav a:hover{color:var(--ink);background:#e8e2d3}
+nav a.on{background:var(--ink);color:#fff}
+.nbadge{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:var(--gold);color:#fff;font-size:11px;line-height:18px;text-align:center}
+.hstreak{font-size:13px;font-weight:600;color:var(--gold);white-space:nowrap;text-decoration:none;flex:none}
+.clock{text-align:right;line-height:1.15;flex:none}
+.ck1{font-size:17px;color:var(--main)}.ck2{font-size:11px;color:var(--muted)}
+main{max-width:1080px;margin:0 auto;padding:24px 18px 80px}
+section.view{display:none}section.view.on{display:block;animation:fade .25s}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+.lead{color:var(--muted);max-width:720px;margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.grid{display:grid;gap:14px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--card);padding:9px 16px;border-radius:999px;font-weight:500;transition:.15s;text-decoration:none;display:inline-block}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--main);border-color:var(--main);color:#fff}
+.btn.primary:hover{background:#1d2c6e}
+.btn.small{padding:6px 12px;font-size:14px}
+.btn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:default}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--gold-soft);color:#7a5412;font-size:13px;font-weight:600}
+.pill.ok{background:#e1f1e7;color:var(--green)}
+.notice{background:var(--gold-soft);border:1px solid #ead2a0;color:#6b4a10;border-radius:12px;padding:10px 14px;font-size:14px;margin-bottom:18px}
+.meter{height:6px;background:var(--line);border-radius:9px;margin-top:8px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--main);border-radius:9px;transition:width .4s}
+select{font:inherit;padding:6px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;opacity:0;transition:.25s;pointer-events:none;font-size:14px;z-index:50}
+.toast.show{opacity:1;transform:translateX(-50%)}
+/* accueil */
+.hero{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin-bottom:18px}
+.hero .big{font-size:84px;color:var(--main);text-align:center;line-height:1.2}
+.daily{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin-bottom:12px}
+.dstreak{display:flex;gap:10px;align-items:center;font-size:14px;line-height:1.2}
+.dstreak b{font-family:Fraunces,serif;font-size:30px}
+.week{display:flex;gap:6px;margin:10px 0 6px}
+.week span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;background:var(--line);color:var(--muted)}
+.week span.ok{background:var(--gold);color:#fff}.week span.td{outline:2px solid var(--main);outline-offset:2px}
+.syncbox{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;font-size:13px;color:var(--muted);border:1px dashed var(--line);border-radius:12px;padding:8px 14px;margin-bottom:22px;background:var(--card)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat b{display:block;font-family:Fraunces,serif;font-size:28px}.stat span{color:var(--muted);font-size:14px}
+/* parcours */
+.ctop{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:10px}
+.unithead{display:flex;justify-content:space-between;align-items:center;color:#fff;border-radius:16px;padding:14px 20px;margin:26px 0 8px}
+.unithead small{display:block;font-size:11px;letter-spacing:.08em;opacity:.85}.unithead b{font-family:Fraunces,serif;font-size:19px}
+.unithead span{font-weight:600;background:rgba(255,255,255,.2);border-radius:99px;padding:3px 10px;font-size:14px}
+.u0{background:var(--main)}.u1{background:#8a5a9e}.u2{background:var(--gold)}.u3{background:#2f7d6f}
+.lpath{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 0 4px}
+.pnode{display:flex;flex-direction:column;align-items:center;width:150px;position:relative}
+.pbtn{width:66px;height:66px;border-radius:50%;border:0;font-size:22px;font-weight:700;color:#fff;background:var(--main);box-shadow:0 6px 0 #18245a;cursor:pointer}
+.pbtn.done{background:#2f9e6a;box-shadow:0 6px 0 #1f6b47}.pbtn.perfect{background:#e0a526;box-shadow:0 6px 0 #a67612}
+.pbtn.checkpoint{width:78px;height:78px;font-size:28px;background:var(--gold);box-shadow:0 6px 0 #845b14}
+.pbtn.prayer{background:#8a5a9e;box-shadow:0 6px 0 #5c3b6b}
+.pbtn.locked{background:#d9d2c3;box-shadow:0 6px 0 #b9b19f;color:#8a8473;cursor:not-allowed}
+.pbtn.cur{outline:4px solid var(--main-soft);outline-offset:4px;animation:pulse 1.6s infinite}
+@keyframes pulse{50%{outline-color:rgba(40,59,143,.35)}}
+.pstart{position:absolute;top:-30px;background:var(--card);border:2px solid var(--main);color:var(--main);font-size:11px;font-weight:800;padding:3px 10px;border-radius:10px;z-index:2}
+.plab{font-size:12px;text-align:center;color:var(--muted);margin:10px 0 14px;max-width:150px;line-height:1.3}
+.crow{display:flex;gap:14px;align-items:center;cursor:pointer;padding:14px 18px}
+.crow p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.crow .cn{flex:none;width:38px;height:38px;border-radius:50%;background:var(--main-soft);color:var(--main);display:grid;place-items:center;font-weight:700}
+.crow.locked{opacity:.5}
+.ltabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.ltabs button{border:0;background:none;padding:10px 16px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent}
+.ltabs button.on{color:var(--main);border-bottom-color:var(--main)}
+.lp{font-size:17px;max-width:760px}
+.tip{background:var(--main-soft);border-left:4px solid var(--main);border-radius:12px;padding:12px 16px;margin:16px 0;max-width:760px}
+.lblock{margin:14px 0;overflow-x:auto}
+.ltbl{border-collapse:collapse;width:100%}
+.ltbl td,.ltbl th{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+.ltbl tr:last-child td{border-bottom:0}
+.ltbl td.cop{font-size:26px;white-space:nowrap}
+.ltbl td.tr{color:var(--main);font-weight:600;white-space:nowrap}
+.lcards{grid-template-columns:repeat(auto-fill,minmax(190px,1fr));margin:14px 0}
+.lcard{text-align:center}.lcard .big{font-size:58px;color:var(--main)}.lcard p{font-size:14px;color:var(--muted);margin:6px 0}
+/* questions */
+.qbox{max-width:640px;margin:0 auto;text-align:center}
+.qhead{display:flex;justify-content:space-between;color:var(--muted);font-size:14px;margin-bottom:10px;gap:10px;flex-wrap:wrap}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.opt{border:1px solid var(--line);border-bottom-width:3px;background:var(--card);color:var(--ink);border-radius:14px;padding:14px;font-size:18px;font-weight:500}
+.opt .cop{font-size:30px}
+.opt:hover{border-color:var(--ink)}
+.opt.good{background:#e1f1e7;border-color:var(--green)}.opt.bad{background:#f7e2df;border-color:var(--red)}
+.fb{border-radius:12px;padding:12px 16px;margin-top:16px;text-align:left}
+.fb.good{background:#e1f1e7;border:1px solid #b9dcc6}.fb.bad{background:#f7e2df;border:1px solid #ebc2bc}
+.retrybar{background:var(--gold-soft);color:#7a5412;border-radius:10px;padding:6px 12px;font-size:14px;font-weight:600;margin-bottom:10px}
+.qcop{line-height:1.5}
+.answerline{min-height:60px;border-bottom:2px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 4px;margin-bottom:14px}
+.answerline.good{border-color:var(--green);background:#e1f1e7}.answerline.bad{border-color:var(--red);background:#f7e2df}
+.answerline .ph{font-size:14px;color:var(--muted)}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:14px}
+.tile{border:1px solid var(--line);border-bottom-width:3px;background:var(--card);border-radius:12px;padding:6px 14px;font-size:22px}
+.tile.used{visibility:hidden}
+.pairs{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pairs>div{display:flex;flex-direction:column;gap:8px}
+.tile.pr{font-size:16px}.tile.sel{border-color:var(--main);background:var(--main-soft)}.tile.ok{opacity:.35;border-color:var(--green)}.tile.wrong{border-color:var(--red);background:#f7e2df}
+.err{margin:10px 0;border-left:4px solid var(--red);text-align:left}
+.score{font-family:Fraunces,serif;font-size:56px;color:var(--main)}
+/* alphabet */
+.letters{grid-template-columns:repeat(auto-fill,minmax(112px,1fr))}
+.lt{cursor:pointer;text-align:center;padding:12px 8px;position:relative;transition:.15s}
+.lt:hover{border-color:var(--main);transform:translateY(-2px)}
+.lt .cop{font-size:40px}.lt .nm{font-weight:600;font-size:14px}.lt .tr{color:var(--muted);font-size:13px}
+.lt.known::after{content:"✓";position:absolute;top:8px;right:10px;color:var(--green);font-weight:700}
+.lt.demo{background:#fbf6ea}
+.detail{display:none;margin-bottom:18px;border-color:var(--main)}.detail.show{display:block}
+.dgrid{display:grid;grid-template-columns:220px 1fr;gap:24px;align-items:center}
+.dbig{font-size:110px;color:var(--main);text-align:center}
+.lwgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:10px 0}
+.lw{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:6px;display:flex;flex-direction:column;align-items:center}
+.lw .cop{font-size:24px}.lw b{font-size:13px;color:var(--main)}.lw small{font-size:11px;color:var(--muted)}
+/* lire */
+.decword{font-size:64px}
+.decomp{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:6px 0 10px}
+.dchip{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:6px 10px;min-width:70px;text-align:center;display:flex;flex-direction:column}
+.dchip.hide{visibility:hidden}.dchip .g{font-size:30px;color:var(--main)}.dchip b{font-size:12px}.dchip span{font-weight:700;color:var(--gold)}.dchip small{font-size:10px;color:var(--muted);max-width:110px}
+.flash{text-align:center;padding:28px 20px}
+.reveal{min-height:56px;margin:6px 0 16px}.reveal .tr{font-size:20px;font-weight:600;color:var(--main)}.reveal .fr{color:var(--muted)}
+.search{width:100%;font:inherit;font-size:17px;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.dres .cop{font-size:24px}.dres .tr{color:var(--main);font-weight:600}.dres small{color:var(--muted)}
+/* écrire */
+.wwrap{display:grid;grid-template-columns:1fr 260px;gap:18px}
+canvas#pad{width:100%;height:320px;background:linear-gradient(var(--line),var(--line)) 0 70%/100% 1px no-repeat,#fffdf8;border:1px solid var(--line);border-radius:var(--radius);touch-action:none;cursor:crosshair;display:block}
+.side .model{font-size:70px;text-align:center;color:var(--main)}
+/* prières */
+.prayer .pl{display:grid;grid-template-columns:1fr;gap:2px;padding:10px 0;border-bottom:1px solid var(--line)}
+.prayer .pl:last-child{border-bottom:0}
+.prayer .c{font-size:24px}.prayer .t{color:var(--main);font-weight:600;font-size:14px}.prayer .f{color:var(--muted);font-size:14px}
+.prayer.hidefr .f,.prayer.hidetr .t{filter:blur(5px);cursor:pointer}
+.phr{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.ph .cop{font-size:24px}.ph .tr{color:var(--main);font-weight:600}.ph .fr{color:var(--muted);font-size:14px;margin-bottom:8px}
+.ph.done{border-color:var(--green)}
+.legend summary{cursor:pointer;font-weight:600;color:var(--main)}
+.legend table{border-collapse:collapse;margin-top:10px;width:100%}
+.legend td{padding:5px 8px;border-bottom:1px solid var(--line);font-size:14px}
+.legend td:first-child{font-weight:700;color:var(--main);white-space:nowrap}
+@media (max-width:820px){
+ .hero,.wwrap,.dgrid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}
+ .bar{flex-wrap:wrap}nav{order:5;flex-basis:100%}
+ .opts{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <a class="switch" href="../arabe/" style="background:#0f6b63" title="Ouvrir l'application pour apprendre l'arabe égyptien">⇄ Arabe <span style="font-family:'Noto Naskh Arabic',serif">حرف</span></a>
+  <a class="logo" href="#accueil"><span class="cop">ⲁⲥⲡⲓ</span> Aspi</a>
+  <nav id="nav">
+    <a href="#accueil">Accueil</a><a href="#cours">Cours</a><a href="#alphabet">Alphabet</a><a href="#lire">Lire</a>
+    <a href="#prieres">Prières et phrases</a><a href="#revisions">Révisions<span class="nbadge" id="revBadge" style="display:none">0</span></a><a href="#quiz">Quiz</a>
+  </nav>
+  <a class="hstreak" id="hdrStreak" href="#accueil">🔥 0</a>
+  <div class="clock" title="Heure en chiffres coptes et date du calendrier copte"><div class="ck1 cop" id="ck1"></div><div class="ck2" id="ck2"></div></div>
+</div></header>
+
+<main>
+<!-- ACCUEIL -->
+<section class="view" id="v-accueil">
+  <div class="hero">
+    <div class="card">
+      <h1>Apprenez à lire et à comprendre le copte</h1>
+      <p class="lead" style="margin-bottom:14px">Le copte est la dernière étape de la langue des anciens Égyptiens, écrite avec un alphabet venu du grec et complété de 7 lettres égyptiennes. On l'entend aujourd'hui dans la liturgie de l'Église copte. Ici, un seul objectif : <b>savoir lire et comprendre</b> le copte bohaïrique, celui de l'Église (prières, hymnes, textes), avec la prononciation d'église.</p>
+      <div class="row"><a class="btn primary" href="#cours" id="heroGo">Commencer les cours</a><a class="btn" href="#prieres">Les prières</a></div>
+    </div>
+    <div class="card" style="display:grid;place-items:center;text-align:center">
+      <div class="cop big">Ⲭⲉⲣⲉ</div>
+      <div><b>khere</b> (souvent prononcé « shéré ») — Salut ! Réjouis-toi !</div>
+    </div>
+  </div>
+  <div id="daily"></div>
+  <div class="syncbox" id="syncBox"></div>
+  <div class="stats" id="stats"></div>
+</section>
+
+<!-- COURS -->
+<section class="view" id="v-cours">
+  <div id="coursHead"><h1>Les cours</h1>
+  <p class="lead">Un chemin pas à pas pour savoir lire et comprendre : l'alphabet, les premiers mots, la grammaire utile pour comprendre, les nombres, puis les prières de l'Église. Chaque leçon a deux parties, <b>Apprendre</b> puis <b>S'exercer</b> (70 % pour avancer). Un <b>bilan</b> 🏁 termine chaque unité (80 %). Vos erreurs sont reprises en fin de leçon et rangées dans vos révisions.</p></div>
+  <div id="cours"></div>
+</section>
+
+<!-- ALPHABET -->
+<section class="view" id="v-alphabet">
+  <h1>L'alphabet copte</h1>
+  <p class="lead">32 lettres : 25 viennent du grec, 7 (sur fond doré) viennent de l'écriture égyptienne démotique pour noter des sons inconnus du grec. Le copte s'écrit de <b>gauche à droite</b>, avec des majuscules et des minuscules. Touchez une lettre pour voir son nom, son son et des mots à lire.</p>
+  <div id="legAlpha"></div>
+  <div class="card detail" id="detail"></div>
+  <div class="grid letters" id="letters"></div>
+</section>
+
+<!-- LIRE -->
+<section class="view" id="v-lire">
+  <h1>Lire</h1>
+  <h2>Déchiffrer un mot, lettre par lettre</h2>
+  <p class="lead">Chaque mot est découpé en lettres avec leur nom et leur son. Devinez le mot avant de le révéler !</p>
+  <div class="row" id="decFilters" style="margin-bottom:12px"></div>
+  <div class="card flash" id="decBox" style="margin-bottom:30px"></div>
+  <h2>Cartes de lecture</h2>
+  <div class="row" id="wcats" style="margin-bottom:12px"></div>
+  <div class="card flash" style="margin-bottom:30px">
+    <div class="pill" id="flashCount"></div>
+    <div class="cop" id="flashWord" style="font-size:64px"></div>
+    <div class="reveal" id="flashReveal"></div>
+    <div class="row" style="justify-content:center"><button class="btn" id="fRev">Révéler</button><button class="btn" id="fNo">À revoir</button><button class="btn primary" id="fYes">Je l'ai lu ✓</button></div>
+  </div>
+  <h2>Dictionnaire</h2>
+  <input class="search" id="dictQ" placeholder="🔎 Rechercher un mot (français, transcription ou copte)…" autocomplete="off">
+  <div id="dictRes" class="grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr));margin-top:12px"></div>
+</section>
+
+<!-- PRIÈRES ET PHRASES -->
+<section class="view" id="v-prieres">
+  <h1>Prières et phrases</h1>
+  <p class="lead">Les prières et réponses de la liturgie, puis des phrases simples, à lire et à comprendre. Pour vérifier que vous lisez et comprenez seul, cachez la transcription ou la traduction : touchez une ligne floue pour la révéler.</p>
+  <div class="row" id="pcats" style="margin-bottom:14px"></div>
+  <div id="pbody"></div>
+</section>
+
+<!-- RÉVISIONS -->
+<section class="view" id="v-revisions">
+  <h1>Mes révisions</h1>
+  <p class="lead">Vos erreurs et les mots des leçons réussies reviennent au bon moment : le jour même, puis 1, 3, 7 et 14 jours plus tard, jusqu'à ce qu'ils soient acquis.</p>
+  <div id="revBody"></div>
+</section>
+
+<!-- QUIZ -->
+<section class="view" id="v-quiz">
+  <h1>Quiz</h1>
+  <p class="lead">Dix questions par série, chaque réponse expliquée. À la fin, refaites les mêmes questions ou tirez-en de nouvelles.</p>
+  <div class="row" style="margin-bottom:18px" id="qmodes"></div>
+  <div class="card qbox" id="qbox"></div>
+</section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   DONNÉES — copte bohaïrique
+   ========================================================= */
+// [majuscule, minuscule, nom, son (prononciation d'église), explication, origine, valeur numérique, exemple, transcription, sens]
+const L=[
+ ['Ⲁ','ⲁ','Alpha','a','« a » comme dans « papa ».','grec',1,'ⲁⲫⲉ','aphe','tête'],
+ ['Ⲃ','ⲃ','Vida','v / b','Se dit « v » ; « b » en fin de mot ou devant une consonne.','grec',2,'ⲃⲁⲕⲓ','baki','ville'],
+ ['Ⲅ','ⲅ','Gamma','g','« g » ; surtout dans les mots venus du grec.','grec',3,'ⲁⲅⲅⲉⲗⲟⲥ','angelos','ange'],
+ ['Ⲇ','ⲇ','Dalda','d','« d » ; surtout dans les mots venus du grec.','grec',4,'Ⲇⲁⲩⲓⲇ','Dauid','David'],
+ ['Ⲉ','ⲉ','Ei','e','« é » ou « è ».','grec',5,'ⲉϩⲟⲟⲩ','ehoou','jour'],
+ ['Ⲋ','ⲋ','Sou','(6)','Ne sert que de chiffre : il vaut 6.','grec',6,'ⲋ̅','sou','six (chiffre)'],
+ ['Ⲍ','ⲍ','Zita','z','« z » comme dans « zèbre ».','grec',7,'ⲍⲱⲏ','zōē','vie'],
+ ['Ⲏ','ⲏ','Ita','ē (i)','Voyelle longue ; à l\'église on la prononce « i ».','grec',8,'ⲏⲓ','ēi','maison'],
+ ['Ⲑ','ⲑ','Thita','th','« th » anglais de « think ».','grec',9,'ⲉⲑⲟⲩⲁⲃ','ethouab','saint'],
+ ['Ⲓ','ⲓ','Yota','i / y','« i », ou « y » devant une voyelle.','grec',10,'ⲓⲱⲧ','iōt','père'],
+ ['Ⲕ','ⲕ','Kappa','k','« k ».','grec',20,'ⲕⲁϩⲓ','kahi','terre'],
+ ['Ⲗ','ⲗ','Laula','l','« l ».','grec',30,'ⲗⲁⲥ','las','langue (organe)'],
+ ['Ⲙ','ⲙ','Mi','m','« m ».','grec',40,'ⲙⲱⲟⲩ','mōou','eau'],
+ ['Ⲛ','ⲛ','Ni','n','« n ».','grec',50,'ⲛⲟⲩⲃ','noub','or'],
+ ['Ⲝ','ⲝ','Exi','ks','« ks » comme le « x » de « taxi ».','grec',60,'Ⲁⲗⲉⲝⲁⲛⲇⲣⲓⲁ','Alexandria','Alexandrie'],
+ ['Ⲟ','ⲟ','O','o','« o » bref.','grec',70,'ⲟⲩⲣⲟ','ouro','roi'],
+ ['Ⲡ','ⲡ','Pi','p','« p ».','grec',80,'ⲡⲓⲣⲏ','pirē','le soleil'],
+ ['Ⲣ','ⲣ','Ro','r','« r » roulé.','grec',100,'ⲣⲱⲙⲓ','rōmi','homme, personne'],
+ ['Ⲥ','ⲥ','Sima','s','« s ».','grec',200,'ⲥⲟⲛ','son','frère'],
+ ['Ⲧ','ⲧ','Tav','t','« t ».','grec',300,'ⲧⲱⲟⲩ','tōou','montagne'],
+ ['Ⲩ','ⲩ','He','u / i','Surtout dans ⲟⲩ (« ou »). Seul, il se lit « i ».','grec',400,'ⲛⲟⲩⲃ','noub','or'],
+ ['Ⲫ','ⲫ','Phi','ph (f)','« ph » ; à l\'église on dit « f ».','grec',500,'ⲫⲉ','phe','ciel'],
+ ['Ⲭ','ⲭ','Khi','kh','« kh », comme la jota espagnole.','grec',600,'ⲭⲣⲱⲙ','khrōm','feu'],
+ ['Ⲯ','ⲯ','Epsi','ps','« ps ».','grec',700,'ⲯⲓⲧ','psit','neuf (9)'],
+ ['Ⲱ','ⲱ','Ō','ō','« o » long.','grec',800,'ⲱⲓⲕ','ōik','pain'],
+ ['Ϣ','ϣ','Shai','sh','« ch » comme dans « chat ».','démotique',0,'ϣⲏⲣⲓ','shēri','fils'],
+ ['Ϥ','ϥ','Fai','f','« f ». Comme chiffre, il vaut 90.','démotique',90,'ϥⲧⲟⲟⲩ','ftoou','quatre (4)'],
+ ['Ϧ','ϧ','Khai','kh','« kh » raclé (lettre propre au bohaïrique).','démotique',0,'ϧⲉⲛ','khen','dans'],
+ ['Ϩ','ϩ','Hori','h','« h » aspiré, comme en anglais « hello ».','démotique',0,'ϩⲏⲧ','hēt','cœur'],
+ ['Ϫ','ϫ','Janja','j (dj)','« dj », comme dans « djinn ».','démotique',0,'ϫⲓϫ','jij','main'],
+ ['Ϭ','ϭ','Chima','ch (tch)','« tch » comme dans « tchèque ».','démotique',0,'ⲡϭⲟⲓⲥ','pchois','le Seigneur'],
+ ['Ϯ','ϯ','Ti','ti','Une seule lettre pour la syllabe « ti ».','démotique',0,'ϯⲛⲟⲩ','tinou','maintenant'],
+];
+const LOW=new Map(L.map(l=>[l[1],l]));const UP=new Map(L.map(l=>[l[0],l]));
+const letterOf=ch=>LOW.get(ch)||UP.get(ch);
+
+// Vocabulaire [copte, transcription, sens, thème]
+const W=[
+ ['ⲣⲱⲙⲓ','rōmi','homme, personne','Personnes'],['ⲥϩⲓⲙⲓ','shimi (es-himi)','femme','Personnes'],['ⲁⲗⲟⲩ','alou','enfant, garçon','Personnes'],['ϣⲫⲏⲣ','shphēr','ami','Personnes'],['ⲟⲩⲣⲟ','ouro','roi','Personnes'],
+ ['ⲓⲱⲧ','iōt','père','Famille'],['ⲙⲁⲩ','mau','mère','Famille'],['ϣⲏⲣⲓ','shēri','fils','Famille'],['ϣⲉⲣⲓ','sheri','fille','Famille'],['ⲥⲟⲛ','son','frère','Famille'],['ⲥⲱⲛⲓ','sōni','sœur','Famille'],['ϩⲁⲓ','hai','mari','Famille'],
+ ['ⲁⲫⲉ','aphe','tête','Corps'],['ⲃⲁⲗ','bal','œil','Corps'],['ⲣⲟ','ro','bouche ; porte','Corps'],['ϫⲓϫ','jij','main','Corps'],['ⲣⲁⲧ','rat','pied','Corps'],['ϩⲏⲧ','hēt','cœur','Corps'],['ⲗⲁⲥ','las','langue (organe)','Corps'],['ⲙⲁϣϫ','mashj','oreille','Corps'],['ⲥⲱⲙⲁ','sōma','corps','Corps'],
+ ['ⲫⲉ','phe','ciel','Nature'],['ⲕⲁϩⲓ','kahi','terre','Nature'],['ⲣⲏ','rē','soleil','Nature'],['ⲓⲟϩ','ioh','lune','Nature'],['ⲥⲓⲟⲩ','siou','étoile','Nature'],['ⲙⲱⲟⲩ','mōou','eau','Nature'],['ⲓⲁⲣⲟ','iaro','fleuve (le Nil)','Nature'],
+ ['ⲓⲟⲙ','iom','mer','Nature'],['ⲭⲣⲱⲙ','khrōm','feu','Nature'],['ϣⲏⲛ','shēn','arbre','Nature'],['ⲧⲱⲟⲩ','tōou','montagne','Nature'],['ⲑⲏⲟⲩ','thēou','vent','Nature'],
+ ['ⲏⲓ','ēi','maison','Vie et Église'],['ⲱⲓⲕ','ōik','pain','Vie et Église'],['ⲏⲣⲡ','ērp','vin','Vie et Église'],['ⲃⲁⲕⲓ','baki','ville','Vie et Église'],['Ⲭⲏⲙⲓ','Khēmi','Égypte','Vie et Église'],
+ ['ⲉⲕⲕⲗⲏⲥⲓⲁ','ekklēsia','église','Vie et Église'],['ⲛⲟⲩⲃ','noub','or','Vie et Église'],['ϩⲁⲧ','hat','argent (métal)','Vie et Église'],['ⲥⲁϫⲓ','saji','parole ; parler','Vie et Église'],['ⲣⲁⲛ','ran','nom','Vie et Église'],
+ ['ⲁⲥⲡⲓ','aspi','langue (parlée)','Vie et Église'],['ⲙⲉⲧⲟⲩⲣⲟ','metouro','royaume','Vie et Église'],['Ⲫⲛⲟⲩϯ','Phnouti','Dieu','Vie et Église'],['Ⲡϭⲟⲓⲥ','Pchois','le Seigneur','Vie et Église'],['ⲁⲅⲅⲉⲗⲟⲥ','angelos','ange','Vie et Église'],
+ ['ⲙⲟⲩⲓ','moui','lion','Animaux'],['ⲉϩⲉ','ehe','vache','Animaux'],['ⲉⲥⲱⲟⲩ','esōou','mouton','Animaux'],['ϩⲑⲟ','htho','cheval','Animaux'],['ϩⲁⲗⲏⲧ','halēt','oiseau','Animaux'],['ⲧⲉⲃⲧ','tebt','poisson','Animaux'],
+ ['ⲟⲩϩⲟⲣ','ouhor','chien','Animaux'],['ϭⲣⲟⲙⲡⲓ','chrompi','colombe','Animaux'],
+ ['ⲉϩⲟⲟⲩ','ehoou','jour','Temps'],['ⲉϫⲱⲣϩ','ejōrh','nuit','Temps'],['ⲣⲟⲙⲡⲓ','rompi','année','Temps'],['ⲁⲃⲟⲧ','abot','mois','Temps'],['ⲟⲩⲛⲟⲩ','ounou','heure','Temps'],
+ ['ϯⲛⲟⲩ','tinou','maintenant','Temps'],['ⲙ̀ⲫⲟⲟⲩ','emphoou','aujourd\'hui','Temps'],['ⲣⲁⲥϯ','rasti','demain','Temps'],['ⲥⲁϥ','saf','hier','Temps'],['ⲧⲟⲟⲩⲓ','tooui','matin','Temps'],
+ ['ⲛⲉⲙ','nem','avec, et','Mots utiles'],['ⲟⲩⲟϩ','ouoh','et (entre deux phrases)','Mots utiles'],['ϧⲉⲛ','khen','dans','Mots utiles'],['ⲁⲗⲗⲁ','alla','mais','Mots utiles'],['ⲛⲓⲙ','nim','qui ? quoi ?','Mots utiles'],
+ ['ⲑⲱⲛ','thōn','où ?','Mots utiles'],['ⲁⲙⲏⲛ','amēn','amen','Mots utiles'],['ⲛⲓϣϯ','nishti','grand','Mots utiles'],['ⲕⲟⲩϫⲓ','kouji','petit','Mots utiles'],['ⲉⲑⲟⲩⲁⲃ','ethouab','saint','Mots utiles'],
+ ['ⲛⲁϩϯ','nahti','croire','Liturgie'],['ⲟⲩⲱϣⲧ','ouōsht','adorer','Liturgie'],['ⲥⲱϯ','sōti','sauver','Liturgie'],['ⲥ̀ⲙⲟⲩ','esmou','bénir','Liturgie'],['ϩⲱⲥ','hōs','chanter, louer','Liturgie'],
+ ['ϣⲗⲏⲗ','shlēl','prier ; prière','Liturgie'],['ⲱⲟⲩ','ōou','gloire','Liturgie'],['ⲛⲁⲓ','nai','pitié, miséricorde','Liturgie'],['ϩⲓⲣⲏⲛⲏ','hirēnē','paix','Liturgie'],['ⲡ̀ⲛⲉⲩⲙⲁ','pneuma','esprit','Liturgie'],
+ ['ⲗⲟⲅⲟⲥ','logos','le Verbe, la parole','Liturgie'],['ⲡⲁⲣⲑⲉⲛⲟⲥ','parthenos','vierge','Liturgie'],['ⲥ̀ⲧⲁⲩⲣⲟⲥ','stauros','croix','Liturgie'],['ⲁ̀ⲛⲁⲥⲧⲁⲥⲓⲥ','anastasis','résurrection','Liturgie'],
+ ['ⲉⲩⲁⲅⲅⲉⲗⲓⲟⲛ','euangelion','évangile','Liturgie'],['ⲡⲁⲛⲧⲟⲕⲣⲁⲧⲱⲣ','pantokratōr','Tout-Puissant','Liturgie'],['ⲟⲩⲏⲃ','ouēb','prêtre','Liturgie'],['ⲇⲓⲁⲕⲱⲛ','diakōn','diacre','Liturgie'],
+ ['ⲉⲡⲓⲥⲕⲟⲡⲟⲥ','episkopos','évêque','Liturgie'],['ⲁⲡⲟⲥⲧⲟⲗⲟⲥ','apostolos','apôtre','Liturgie'],['ⲙⲁⲣⲧⲩⲣⲟⲥ','martyros','martyr','Liturgie'],['ϣⲟⲩϣⲱⲟⲩϣⲓ','shoushōoushi','offrande (d\'encens)','Liturgie'],
+ ['ⲡⲁⲣⲁⲇⲓⲥⲟⲥ','paradisos','paradis','Liturgie'],['ⲁ̀ⲅⲓⲟⲥ','agios','saint (mot grec)','Liturgie'],['ⲁⲗⲗⲏⲗⲟⲩⲓⲁ','allēlouia','alléluia','Liturgie'],
+ ['ⲥ̀ⲛⲟϥ','snof','sang','Liturgie'],['ⲛⲟⲃⲓ','nobi','péché','Liturgie'],['ⲑⲉⲟ̀ⲧⲟⲕⲟⲥ','Theotokos','Mère de Dieu','Liturgie'],['ⲙⲉⲑⲙⲏⲓ','methmēi','vérité','Liturgie'],
+ ['ⲡ̀ⲣⲉⲥⲃⲓⲁ','presbia','intercession','Liturgie'],['ⲗⲁⲟⲥ','laos','peuple, assemblée','Liturgie'],['ϫⲟⲙ','jom','puissance, force','Liturgie'],['ⲣⲁϣⲓ','rashi','joie','Liturgie'],
+ ['ⲥⲱⲧⲉⲙ','sōtem','écouter','Verbes'],['ⲥϧⲁⲓ','skhai','écrire','Verbes'],['ⲱϣ','ōsh','lire ; appeler','Verbes'],['ⲙⲉⲓ','mei','aimer','Verbes'],['ⲛⲁⲩ','nau','voir','Verbes'],['ϣⲉ','she','aller','Verbes'],
+ ['ⲟⲩⲱⲙ','ouōm','manger','Verbes'],['ⲥⲱ','sō','boire','Verbes'],['ⲉⲙⲓ','emi','savoir','Verbes'],['ⲧⲱⲃϩ','tōbh','prier','Verbes'],['ⲧⲱⲛ','tōn','se lever','Verbes'],
+];
+const WCATS=[...new Set(W.map(w=>w[3]))];
+const NUMS=[['ⲟⲩⲁⲓ','ouai',1,'ⲁ̅'],['ⲥⲛⲁⲩ','snau',2,'ⲃ̅'],['ϣⲟⲙⲧ','shomt',3,'ⲅ̅'],['ϥⲧⲟⲟⲩ','ftoou',4,'ⲇ̅'],['ϯⲟⲩ','tiou',5,'ⲉ̅'],['ⲥⲟⲟⲩ','soou',6,'ⲋ̅'],['ϣⲁϣϥ','shashf',7,'ⲍ̅'],['ϣⲙⲏⲛ','shmēn',8,'ⲏ̅'],['ⲯⲓⲧ','psit',9,'ⲑ̅'],['ⲙⲏⲧ','mēt',10,'ⲓ̅'],['ϫⲟⲩⲧ','jout',20,'ⲕ̅'],['ϣⲉ','she',100,'ⲣ̅']];
+
+// Phrases et prières [catégorie, copte, transcription, français]
+const P=[
+ ['Salutations','Ⲭⲉⲣⲉ','khere (« shéré »)','Salut ! Réjouis-toi !'],
+ ['Salutations','Ϣⲉⲡϩ̀ⲙⲟⲧ','shep-hmot','Merci (litt. « reçois la grâce »)'],
+ ['Salutations','Ⲓⲣⲏⲛⲏ ⲡⲁⲥⲓ','irēnē pasi','La paix soit avec vous'],
+ ['Salutations','Ⲕⲉ ⲧⲟⲩ ⲡ̀ⲛⲉⲩⲙⲁⲧⲓ ⲥⲟⲩ','ke tou pneumati sou','Et avec votre esprit (réponse à « Ⲓⲣⲏⲛⲏ ⲡⲁⲥⲓ »)'],
+ ['Salutations','Ϧⲉⲛ ⲟⲩϩⲓⲣⲏⲛⲏ','khen ouhirēnē','En paix (pour se quitter)'],
+ ['Se présenter','Ⲡⲉⲕⲣⲁⲛ ⲡⲉ ⲛⲓⲙ','pekran pe nim','Quel est ton nom ? (à un homme)'],
+ ['Se présenter','Ⲡⲁⲣⲁⲛ ⲡⲉ Ⲙⲁⲣⲕⲟⲥ','paran pe Markos','Je m\'appelle Marc (« mon nom est Marc »)'],
+ ['Se présenter','Ⲁⲛⲟⲕ ⲟⲩⲣⲉⲙⲛ̀ⲭⲏⲙⲓ','anok ouremenkhēmi','Je suis égyptien'],
+ ['Se présenter','Ϯⲙⲉⲓ ⲙ̀ⲙⲟⲕ','timei emmok','Je t\'aime (à un homme)'],
+ ['Se présenter','Ϯⲥⲱⲧⲉⲙ','tisōtem','J\'écoute'],
+ ['Se présenter','Ⲛ̀ϯⲥⲱⲧⲉⲙ ⲁⲛ','entisōtem an','Je n\'écoute pas'],
+ ['Église','Ⲁⲙⲏⲛ','amēn','Amen'],
+ ['Église','Ⲕⲩⲣⲓⲉ ⲉ̀ⲗⲉⲏ̀ⲥⲟⲛ','kyrie eleēson','Pitié, Seigneur'],
+ ['Église','Ⲡⲓⲭ̀ⲣⲓⲥⲧⲟⲥ ⲁϥⲧⲱⲛϥ','pikhristos aftōnf','Le Christ est ressuscité !'],
+ ['Église','Ⲁ̀ⲗⲏⲑⲱⲥ ⲁϥⲧⲱⲛϥ','alēthōs aftōnf','Il est vraiment ressuscité !'],
+ ['Église','Ⲭⲉⲣⲉ ⲛⲉ Ⲙⲁⲣⲓⲁ','khere ne Maria','Salut à toi, Marie'],
+ ['Église','Ϯⲛⲁϩϯ','tinahti','Je crois'],
+ ['Église','Ⲁⲝⲓⲟⲛ ⲕⲉ ⲇⲓⲕⲉⲟⲛ','axion ke dikeon','Cela est digne et juste'],
+ ['Église','Ⲇⲟⲝⲁ ⲥⲓ Ⲕⲩⲣⲓⲉ','doxa si Kyrie','Gloire à Toi, Seigneur'],
+ ['Église','Ⲟⲩⲛⲟⲩϯ ⲛ̀ⲟⲩⲱⲧ','ounouti enouōt','Un seul Dieu'],
+];
+const PRAYERS=[
+ {id:'croix',src:189,title:'Le signe de croix',lines:[['Ϧⲉⲛ ⲫ̀ⲣⲁⲛ ⲙ̀ⲫ̀ⲓⲱⲧ','khen ephran emphiōt','Au nom du Père,'],['ⲛⲉⲙ ⲡ̀ϣⲏⲣⲓ','nem epshēri','du Fils'],['ⲛⲉⲙ ⲡⲓⲡ̀ⲛⲉⲩⲙⲁ ⲉⲑⲟⲩⲁⲃ','nem pipneuma ethouab','et du Saint-Esprit,'],['ⲟⲩⲛⲟⲩϯ ⲛ̀ⲟⲩⲱⲧ','ounouti enouōt','un seul Dieu.'],['Ϥⲥ̀ⲙⲁⲣⲱⲟⲩⲧ ⲛ̀ϫⲉ ⲫ̀ⲛⲟⲩϯ ⲫ̀ⲓⲱⲧ ⲡⲓⲡⲁⲛⲧⲟⲕⲣⲁⲧⲱⲣ','fesmarōout enje ephnouti ephiōt pipantokratōr','Béni soit Dieu, le Père, le Pantocrator.'],['Ⲁ̀ⲙⲏⲛ','amēn','Amen.']]},
+ {id:'pere',src:5,title:'Le Notre Père',lines:[
+  ['Ⲡⲉⲛⲓⲱⲧ ⲉⲧ ϧⲉⲛ ⲛⲓⲫⲏⲟⲩⲓ̀','peniōt et khen niphēoui','Notre Père qui es aux cieux,'],
+  ['ⲙⲁⲣⲉϥⲧⲟⲩⲃⲟ ⲛ̀ϫⲉ ⲡⲉⲕⲣⲁⲛ','marefthoubo enje pekran','que Ton Nom soit sanctifié.'],
+  ['Ⲙⲁⲣⲉⲥⲓ̀ ⲛ̀ϫⲉ ⲧⲉⲕⲙⲉⲧⲟⲩⲣⲟ','mares-i enje tekmetouro','Que Ton règne vienne.'],
+  ['Ⲡⲉⲧⲉϩ ⲛⲁⲕ ⲙⲁⲣⲉϥϣⲱⲡⲓ','peteh nak marefshōpi','Que Ta volonté soit faite'],
+  ['ⲙ̀ⲫ̀ⲣⲏϯ ϧⲉⲛ ⲧ̀ⲫⲉ ⲛⲉⲙ ϩⲓϫⲉⲛ ⲡⲓⲕⲁϩⲓ','emphrēti khen etphe nem hijen pikahi','sur la terre comme au ciel.'],
+  ['Ⲡⲉⲛⲱⲓⲕ ⲛ̀ⲧⲉ ⲣⲁⲥϯ ⲙⲏⲓϥ ⲛⲁⲛ ⲙ̀ⲫⲟⲟⲩ','penōik ente rasti mēif nan emphoou','Donne-nous aujourd\'hui notre pain de ce jour ;'],
+  ['Ⲟⲩⲟϩ ⲭⲁ ⲛⲏⲉⲧⲉ̀ⲣⲟⲛ ⲛⲁⲛ ⲉ̀ⲃⲟⲗ','ouoh kha nēeteron nan ebol','pardonne-nous nos offenses,'],
+  ['ⲙ̀ⲫ̀ⲣⲏϯ ϩⲱⲛ ⲛ̀ⲧⲉⲛⲭⲱ ⲉ̀ⲃⲟⲗ ⲛ̀ⲛⲏⲉ̀ⲧⲉ ⲟⲩⲟⲛ ⲛ̀ⲧⲁⲛ ⲉ̀ⲣⲱⲟⲩ','emphrēti hōn entenkhō ebol ennēete ouon entan erōou','comme nous pardonnons aussi à ceux qui nous ont offensés ;'],
+  ['Ⲟⲩⲟϩ ⲙ̀ⲡⲉⲣⲉⲛⲧⲉⲛ ⲉ̀ϧⲟⲩⲛ ⲉ̀ⲡⲓⲣⲁⲥⲙⲟⲥ','ouoh emperenten ekhoun epirasmos','ne nous soumets pas à la tentation,'],
+  ['ⲁⲗⲗⲁ ⲛⲁϩⲙⲉⲛ ⲉ̀ⲃⲟⲗ ϩⲁ ⲡⲓⲡⲉⲧϩⲱⲟⲩ','alla nahmen ebol ha pipethōou','mais délivre-nous du mal,'],
+  ['Ϧⲉⲛ Ⲡⲭ̅ⲥ̅ Ⲓⲏ̅ⲥ̅ Ⲡⲉⲛϭ̅ⲥ̅','khen Pikhristos Iēsous Penchois','par Jésus-Christ, notre Seigneur,'],
+  ['ϫⲉ ⲑⲱⲕ ⲧⲉ ϯⲙⲉⲧⲟⲩⲣⲟ ⲛⲉⲙ ϯϫⲟⲙ ⲛⲉⲙ ⲡⲓⲱ̀ⲟⲩ ϣⲁ ⲉ̀ⲛⲉϩ','je thōk te timetouro nem tijom nem piōou sha eneh','car c\'est à Toi qu\'appartiennent le règne, la puissance et la gloire dans les siècles des siècles.'],
+  ['Ⲁ̀ⲙⲏⲛ','amēn','Amen.']]},
+ {id:'priere',src:7,title:'« Prions » : le début des prières',lines:[['Ϣ̀ⲗⲏⲗ','eshlēl','(prêtre) Prions.'],['Ⲉ̀ⲡⲓ ⲡ̀ⲣⲟⲥⲉⲩⲭⲏ ⲥ̀ⲧⲁⲑⲏⲧⲉ','epi proseukhē stathēte','(diacre) Pour la prière, levons-nous.'],['Ⲓⲣⲏⲛⲏ ⲡⲁⲥⲓ','irēnē pasi','(prêtre) La paix soit avec vous.'],['Ⲕⲉ ⲧⲟⲩ ⲡ̀ⲛⲉⲩⲙⲁⲧⲓ ⲥⲟⲩ','ke tou pneumati sou','(assemblée) Et avec votre esprit.'],['Ⲡⲣⲟⲥⲉⲩⲝⲁⲥⲑⲉ','proseuxasthe','(diacre) Prions.'],['Ⲕⲩⲣⲓⲉ ⲉ̀ⲗⲉⲏ̀ⲥⲟⲛ','kyrie eleēson','(assemblée) Pitié, Seigneur.']]},
+ {id:'evangile',src:122,title:'Autour de l\'Évangile',lines:[['Ⲇⲟⲝⲁ ⲥⲓ Ⲕⲩⲣⲓⲉ','doxa si Kyrie','(assemblée) Gloire à Toi, Seigneur.'],['Ϧⲉⲛ Ⲡⲭ̅ⲥ̅ Ⲓⲏ̅ⲥ̅ ⲡⲉⲛϭⲟⲓⲥ','khen Pikhristos Iēsous penchois','(assemblée) Par le Christ Jésus notre Seigneur.'],['Ⲧⲁⲥ ⲕⲉⲫⲁⲗⲁⲥ ⲩ̀ⲙⲱⲛ ⲧⲱ Ⲕⲩⲣⲓⲱ ⲕ̀ⲗⲓⲛⲁⲧⲉ','tas kephalas hymōn tō Kyriō klinate','(diacre) Inclinez vos têtes devant le Seigneur.'],['Ⲉⲛⲱⲡⲓⲟⲛ ⲥⲟⲩ Ⲕⲩⲣⲓⲉ','enōpion sou Kyrie','(assemblée) Devant Toi, Seigneur.'],['Ⲡⲣⲟⲥⲭⲱⲙⲉⲛ Ⲑⲉⲟⲩ ⲙⲉⲧⲁ ⲫⲟⲃⲟⲩ','proskhōmen Theou meta phobou','(diacre) Soyons attentifs dans la crainte de Dieu.'],['Ⲁⲙⲏⲛ ⲉⲥⲉ̀ϣⲱⲡⲓ','amēn eseshōpi','(assemblée) Amen, ainsi soit-il.']]},
+ {id:'anaphore',src:266,title:'Le dialogue de l\'anaphore',lines:[['Ⲕⲉ ⲙⲉⲧⲁ ⲧⲟⲩ ⲡ̀ⲛⲉⲩⲙⲁⲧⲟⲥ ⲥⲟⲩ','ke meta tou pneumatos sou','(assemblée, au « Le Seigneur soit avec vous tous ») Et avec votre esprit.'],['Ⲁⲛⲱ ⲩ̀ⲙⲱⲛ ⲧⲁⲥ ⲕⲁⲣⲇⲓⲁⲥ','anō hymōn tas kardias','(prêtre) Élevez vos cœurs.'],['Ⲉⲭⲱⲙⲉⲛ ⲡ̀ⲣⲟⲥ ⲧⲟⲛ Ⲕⲩⲣⲓⲟⲛ','ekhōmen pros ton Kyrion','(assemblée) Nous les tournons vers le Seigneur.'],['Ⲉⲩⲭⲁⲣⲓⲥⲧⲏⲥⲱⲙⲉⲛ ⲧⲱ Ⲕⲩⲣⲓⲱ','eukharistēsōmen tō Kyriō','(prêtre) Rendons grâce au Seigneur.'],['Ⲁⲝⲓⲟⲛ ⲕⲉ ⲇⲓⲕⲉⲟⲛ','axion ke dikeon','(assemblée) Cela est digne et juste.']]},
+ {id:'consecration',src:282,title:'Les réponses de la consécration',lines:[['Ⲁⲙⲏⲛ ϯⲛⲁϩϯ','amēn tinahti','Amen, je crois (« nous croyons »).'],['Ⲁⲗⲏⲑⲟⲥ ⲡⲓⲥⲧⲉⲩⲟⲙⲉⲛ','alēthos pisteuomen','En vérité, nous croyons.'],['Ⲧⲉⲛⲛⲁϩϯ ϫⲉ ⲫⲁⲓ ⲡⲉ ϧⲉⲛ ⲟⲩⲙⲉⲑⲙⲏⲓ ⲁⲙⲏⲛ','tennahti je phai pe khen oumethmēi amēn','Nous croyons que ceci est en vérité. Amen.'],['Ⲡⲓⲥⲧⲉⲩⲟⲙⲉⲛ ⲕⲉ ⲟ̀ⲙⲟⲗⲟⲅⲟⲩⲙⲉⲛ ⲕⲉ ⲇⲟⲝⲁⲍⲟⲙⲉⲛ','pisteuomen ke omologoumen ke doxazomen','Nous croyons, nous confessons et nous glorifions.'],['Ⲧⲉⲛϩⲱⲥ ⲉ̀ⲣⲟⲕ ⲧⲉⲛⲥ̀ⲙⲟⲩ ⲉ̀ⲣⲟⲕ ⲧⲉⲛϣⲉⲙϣⲓ ⲙ̀ⲙⲟⲕ ⲧⲉⲛⲟⲩⲱϣⲧ ⲙ̀ⲙⲟⲕ','tenhōs erok tensmou erok tenshemshi emmok tenouōsht emmok','Nous Te louons, nous Te bénissons, nous Te servons et nous T\'adorons.'],['Ⲕⲁⲧⲁ ⲧⲟ ⲉ̀ⲗⲉⲟⲥ ⲥⲟⲩ Ⲕⲩⲣⲓⲉ ⲕⲉ ⲙⲏ ⲕⲁⲧⲁ ⲧⲁⲥ ⲁ̀ⲙⲁⲣⲧⲓⲁⲥ ⲏ̀ⲙⲱⲛ','kata to eleos sou Kyrie ke mē kata tas amartias ēmōn','Selon Ta miséricorde, Seigneur, et non selon nos péchés.']]},
+ {id:'communion',src:348,title:'Avant la communion',lines:[['Ⲓⲥ ⲟ̀ ⲡⲁⲛⲁ̀ⲅⲓⲟⲥ Ⲡⲁⲧⲏⲣ','is o panagios Patēr','Un est le Père saint,'],['ⲓⲥ ⲟ̀ ⲡⲁⲛⲁ̀ⲅⲓⲟⲥ Ⲩⲓⲟⲥ','is o panagios Hyios','un est le Fils saint,'],['ⲉⲛ ⲧⲟ ⲡⲁⲛⲁ̀ⲅⲓⲟⲛ ⲡ̀ⲛⲉⲩⲙⲁ ⲁ̀ⲙⲏⲛ','en to panagion pneuma amēn','un est l\'Esprit saint. Amen.'],['Ⲧⲉⲛⲟⲩⲱϣⲧ ⲙ̀ⲡⲉⲕⲥⲱⲙⲁ ⲉⲑⲟⲩⲁⲃ','tenouōsht empeksōma ethouab','Nous adorons Ton corps sacré'],['Ⲛⲉⲙ ⲡⲉⲕⲥ̀ⲛⲟϥ ⲉⲧⲧⲁⲓⲏⲟⲩⲧ','nem peksnof ettaiēout','et Ton sang précieux.'],['Ⲁⲙⲏⲛ ϯⲛⲁϩϯ','amēn tinahti','Amen, je crois.']]},
+ {id:'gloria',src:381,title:'Gloire à Dieu au plus haut des cieux',lines:[['Ⲟⲩⲱ̀ⲟⲩ ⲙ̀Ⲫ̀ⲛⲟⲩϯ ϧⲉⲛ ⲛⲏⲉⲧϭⲟⲥⲓ','ouōou emPhnouti khen nēetchosi','Gloire à Dieu au plus haut des cieux,'],['ⲛⲉⲙ ⲟⲩϩⲓⲣⲏⲛⲏ ϩⲓϫⲉⲛ ⲡⲓⲕⲁϩⲓ','nem ouhirēnē hijen pikahi','et paix sur la terre,'],['ⲛⲉⲙ ⲟⲩϯⲙⲁϯ ϧⲉⲛ ⲛⲓⲣⲱⲙⲓ','nem outimati khen nirōmi','et joie aux hommes.']]},
+ {id:'intercession',src:264,title:'Par les intercessions de la Mère de Dieu',lines:[['Ϩⲓⲧⲉⲛ ⲛⲓⲡ̀ⲣⲉⲥⲃⲓⲁ ⲛ̀ⲧⲉ ϯⲑⲉⲟ̀ⲧⲟⲕⲟⲥ ⲉⲑⲟⲩⲁⲃ Ⲙⲁⲣⲓⲁ','hiten nipresbia ente tiTheotokos ethouab Maria','Par les intercessions de la Mère de Dieu, la très sainte Vierge Marie,'],['Ⲡ̀ϭⲟⲓⲥ ⲁⲣⲓϩ̀ⲙⲟⲧ ⲛⲁⲛ ⲙ̀ⲡⲓⲭⲱ ⲉ̀ⲃⲟⲗ ⲛ̀ⲧⲉ ⲛⲉⲛⲛⲟⲃⲓ','Pchois arihmot nan empikhō ebol ente nennobi','Seigneur, accorde-nous la rémission de nos péchés.']]},
+ {id:'trisagion',src:49,title:'Le Trisagion (« Dieu Saint »)',lines:[['Ⲁⲅⲓⲟⲥ ⲟ̀ Ⲑⲉⲟⲥ','agios o Theos','Dieu Saint,'],['Ⲁⲅⲓⲟⲥ Ⲓⲥⲭⲩⲣⲟⲥ','agios Iskhyros','Saint Fort,'],['Ⲁⲅⲓⲟⲥ Ⲁⲑⲁⲛⲁⲧⲟⲥ','agios Athanatos','Saint Immortel,'],['ⲟ̀ ⲉⲕⲡⲁⲣⲑⲉⲛⲟⲩ ⲅⲉⲛⲛⲉⲑⲓⲥ','o ekparthenou gennethis','né de la Vierge,'],['ⲉ̀ⲗⲉⲏ̀ⲥⲟⲛ ⲏ̀ⲙⲁⲥ','eleēson ēmas','aie pitié de nous.']]},
+ {id:'doxa',src:52,title:'Gloire au Père',lines:[['Ⲇⲟⲝⲁ ⲡⲁⲧⲣⲓ ⲕⲉ Ⲩ̀ⲓⲱ ⲕⲉ ⲁⲅⲓⲱ Ⲡ̀ⲛⲉⲩⲙⲁⲧⲓ','doxa patri ke hyiō ke agiō pneumati','Gloire au Père, au Fils et au Saint-Esprit,'],['ⲕⲉ ⲛⲩⲛ ⲕⲉ ⲁ̀ⲓ̀ ⲕⲉ ⲓⲥ ⲧⲟⲩⲥ ⲉ̀ⲱ̀ⲛⲁⲥ ⲧⲱⲛ ⲉ̀ⲱ̀ⲛⲱⲛ ⲁ̀ⲙⲏⲛ','ke nyn ke aï ke is tous eōnas tōn eōnōn amēn','maintenant et toujours et dans les siècles des siècles. Amen.'],['Ⲁⲅⲓⲁ Ⲧ̀ⲣⲓⲁⲥ ⲉ̀ⲗⲉⲏ̀ⲥⲟⲛ ⲏ̀ⲙⲁⲥ','agia trias eleēson ēmas','Sainte Trinité, aie pitié de nous.']]},
+ {id:'marie',src:19,title:'Salut à toi, Marie',lines:[['Ⲭⲉⲣⲉ ⲛⲉ Ⲙⲁⲣⲓⲁ','khere ne Maria','Salut à toi, Marie,'],['ϯϭ̀ⲣⲟⲙⲡⲓ ⲉⲑⲛⲉⲥⲱⲥ','tichrompi ethnesōs','la belle colombe,'],['ⲑⲏⲉ̀ⲧⲁⲥⲙⲓⲥⲓ ⲛⲁⲛ ⲙ̀Ⲫ̀ⲛⲟⲩϯ ⲡⲓⲗⲟⲅⲟⲥ','thē-etasmisi nan emPhnouti pilogos','celle qui a enfanté pour nous Dieu le Verbe.']]},
+ {id:'adoration',src:152,title:'Hymne : « Nous T\'adorons, ô Christ »',lines:[['Ⲧⲉⲛⲟⲩⲱϣⲧ ⲙ̀ⲙⲟⲕ ⲱ̀ Ⲡⲭ̅ⲥ̅','tenouōsht emmok ō Pikhristos','Nous T\'adorons, ô Christ,'],['ⲛⲉⲙ Ⲡⲉⲕⲓⲱⲧ ⲛ̀ⲁ̀ⲅⲁⲑⲟⲥ','nem Pekiōt enagathos','avec Ton bon Père'],['ⲛⲉⲙ Ⲡⲓⲡ̀ⲛⲉⲩⲙⲁ ⲉⲑⲟⲩⲁⲃ','nem Pipneuma ethouab','et le Saint-Esprit,'],['ϫⲉ ⲁⲕⲓ̀ ⲁⲕⲥⲱϯ ⲙ̀ⲙⲟⲛ','je aki aksōti emmon','car Tu es venu et Tu nous as sauvés.']]},
+ {id:'aripameui',src:1032,title:'Hymne : « Souviens-Toi de moi »',lines:[['Ⲁ̀ⲣⲓⲡⲁⲙⲉⲩⲓ̀ ⲱ̀ Ⲡⲁϭⲟⲓⲥ','aripameui ō Pachois','Souviens-Toi de moi, ô mon Seigneur,'],['ⲁ̀ⲣⲓⲡⲁⲙⲉⲩⲓ̀ ⲱ̀ Ⲡⲁⲛⲟⲩϯ','aripameui ō Panouti','souviens-Toi de moi, ô mon Dieu,'],['ⲁ̀ⲣⲓⲡⲁⲙⲉⲩⲓ̀ ⲱ̀ Ⲡⲁⲟⲩⲣⲟ','aripameui ō Paouro','souviens-Toi de moi, ô mon Roi,'],['ⲁⲕϣⲁⲛⲓ̀ ϧⲉⲛ ⲧⲉⲕⲙⲉⲧⲟⲩⲣⲟ','akshani khen tekmetouro','quand Tu seras dans Ton Royaume.']]},
+ {id:'paques',title:'La salutation de Pâques',lines:[['Ⲡⲓⲭ̀ⲣⲓⲥⲧⲟⲥ ⲁϥⲧⲱⲛϥ','pikhristos aftōnf','Le Christ est ressuscité !'],['Ⲁ̀ⲗⲏⲑⲱⲥ ⲁϥⲧⲱⲛϥ','alēthōs aftōnf','Il est vraiment ressuscité !']]},
+ {id:'credo',title:'Le Credo (début)',lines:[['Ⲧⲉⲛⲛⲁϩϯ ⲉ̀ⲟⲩⲛⲟⲩϯ ⲛ̀ⲟⲩⲱⲧ','tennahti eounouti enouōt','Nous croyons en un seul Dieu,'],['Ⲫ̀ⲛⲟⲩϯ Ⲫ̀ⲓⲱⲧ ⲡⲓⲡⲁⲛⲧⲟⲕⲣⲁⲧⲱⲣ','Phnouti Phiōt pipantokratōr','Dieu le Père, le Tout-Puissant,'],['ⲫ̀ⲏⲉ̀ⲧⲁϥⲑⲁⲙⲓⲟ ⲛ̀ⲧ̀ⲫⲉ ⲛⲉⲙ ⲡ̀ⲕⲁϩⲓ','phē-etafthamio entphe nem pkahi','qui a créé le ciel et la terre,'],['ⲛⲏⲉⲧⲟⲩⲛⲁⲩ ⲉ̀ⲣⲱⲟⲩ ⲛⲉⲙ ⲛⲏⲉ̀ⲧⲉ ⲛ̀ⲥⲉⲛⲁⲩ ⲉ̀ⲣⲱⲟⲩ ⲁⲛ','nēetounau erōou nem nēete ensenau erōou an','les choses visibles et invisibles.']]},
+];
+
+/* =========================================================
+   GUIDE DE PRONONCIATION
+   ========================================================= */
+const LEG=[['ā ē ī ō ū','Trait au-dessus = voyelle longue. ē (lettre ⲏ) se dit « i » à l\'église.'],['ou','Le groupe ⲟⲩ se lit « ou » (ou « w » devant une voyelle).'],['ph','« f » (lettre ⲫ).'],['th','« th » anglais de « think » (lettre ⲑ).'],['kh','r raclé comme la jota espagnole (lettres ⲭ et ϧ).'],['sh','« ch » de « chat » (lettre ϣ).'],['j','« dj » (lettre ϫ).'],['ch','« tch » (lettre ϭ).'],['h','h aspiré (lettre ϩ).'],['e-','Le petit trait (jinkim, ̀) au-dessus d\'une consonne ajoute un « e » avant : ⲛ̀ = « en ».'],['b / v','La lettre ⲃ se dit « v », sauf en fin de mot ou devant une consonne.'],['r','Toujours roulé.']];
+function LEGEND(open){return `<details class="card legend" ${open?'open':''} style="margin-bottom:16px"><summary>Comment lire les transcriptions et prononcer le copte ?</summary><p style="font-size:14px;color:var(--muted)">La prononciation enseignée est celle de l'Église copte aujourd'hui (dite « gréco-bohaïrique »). Il en existe une autre, plus ancienne (« vieux-bohaïrique »), utilisée dans certaines églises : selon votre paroisse, quelques sons peuvent différer.</p><table>${LEG.map(l=>`<tr><td>${l[0]}</td><td>${l[1]}</td></tr>`).join('')}</table></details>`}
+
+/* =========================================================
+   OUTILS
+   ========================================================= */
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200)}
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+const MTOK=s=>String(s).toLowerCase().replace(/\(.*?\)/g,'').replace(/«[^»]*»/g,'').split(/[,;/]| ou /).map(x=>x.replace(/^(le|la|les|l'|un|une|des|du|de)\s+/,'').replace(/[«»!?.…]/g,'').trim()).filter(x=>x.length>1);
+let MEAN=null;const meanOf=x=>{if(!MEAN){MEAN=new Map();W.forEach(w=>MEAN.set(w[0],w[2]));P.forEach(p=>MEAN.set(p[1],p[3]));PRAYERS.forEach(p=>p.lines.forEach(l=>MEAN.set(l[0],l[2])));}return MEAN.has(x)?MEAN.get(x):x};
+const clashF=(a,b)=>{if(a===b)return true;const A=MTOK(a),B=MTOK(b);if(!A.length||!B.length)return false;if(String(a).length<26&&String(b).length<26)return A.some(t=>B.includes(t));return A.every(t=>B.includes(t))||B.every(t=>A.includes(t))};
+const clash=(a,b)=>a===b||clashF(meanOf(a),meanOf(b));
+function distract(correct,pool,n){return shuffle([...new Set(pool.filter(x=>x!==correct&&!clash(correct,x)))]).slice(0,n)}
+const DAY=86400000;
+function todayKey(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function startOfDay(t){const d=new Date(t);d.setHours(0,0,0,0);return d.getTime()}
+const MARKS=/[̀-ͯ︠-︯]/;
+const plain=t=>String(t).normalize('NFD').replace(/[̀-ͯ︠-︯]/g,'');
+
+/* ---- Stockage ---- */
+let S={lessons:{},review:{},reviewDone:{},days:{},goal:1,known:{},words:{},best:{},said:{},sync:true};
+try{const r=localStorage.getItem('aspi-v1');if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+function save(){try{localStorage.setItem('aspi-v1',JSON.stringify(S))}catch(e){}renderStats();try{queueSync()}catch(e){}}
+
+/* =========================================================
+   HORLOGE : heure en chiffres coptes + calendrier copte
+   ========================================================= */
+const CNUM={1:'ⲁ',2:'ⲃ',3:'ⲅ',4:'ⲇ',5:'ⲉ',6:'ⲋ',7:'ⲍ',8:'ⲏ',9:'ⲑ',10:'ⲓ',20:'ⲕ',30:'ⲗ',40:'ⲙ',50:'ⲛ',60:'ⲝ',70:'ⲟ',80:'ⲡ',90:'ϥ'};
+function copNum(n){if(n===0)return'ⲟ̅';const t=Math.floor(n/10)*10,u=n%10;return [...((t?CNUM[t]:'')+(u?CNUM[u]:''))].map(c=>c+'̅').join('')}
+const CMONTHS=[['Ⲑⲱⲟⲩⲧ','Thout'],['Ⲡⲁⲟⲡⲉ','Paopi'],['Ⲁⲑⲱⲣ','Hathor'],['Ⲭⲟⲓⲁⲕ','Kiahk'],['Ⲧⲱⲃⲓ','Tobi'],['Ⲙⲉϣⲓⲣ','Meshir'],['Ⲡⲁⲣⲉⲙϩⲁⲧ','Paremhat'],['Ⲫⲁⲣⲙⲟⲩⲑⲓ','Parmouti'],['Ⲡⲁϣⲟⲛⲥ','Pashons'],['Ⲡⲁⲱⲛⲓ','Paoni'],['Ⲉⲡⲏⲡ','Epip'],['Ⲙⲉⲥⲱⲣⲏ','Mesori'],['Ⲡⲓⲕⲟⲩϫⲓ ⲛ̀ⲁ̀ⲃⲟⲧ','Nasie (petit mois)']];
+function copticDate(d){
+  const utc=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate());
+  const start=gy=>{const Y=gy-283;return Date.UTC(gy,8,((Y-1)%4===3)?12:11)};
+  let gy=d.getFullYear(),s=start(gy);if(utc<s){gy--;s=start(gy)}
+  const k=Math.round((utc-s)/DAY);return{year:gy-283,month:Math.floor(k/30),day:k%30+1};
+}
+function tickClock(){
+  const d=new Date(),h=d.getHours(),m=d.getMinutes(),c=copticDate(d);
+  $('#ck1').textContent=`${copNum(h)} : ${copNum(m)} · ${CMONTHS[c.month][0]} ${copNum(c.day)}`;
+  $('#ck2').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')} · ${c.day} ${CMONTHS[c.month][1]} ${c.year} (calendrier copte)`;
+}
+
+/* =========================================================
+   GÉNÉRATION DE QUESTIONS
+   ========================================================= */
+function letterWhy(l){return `<b>${l[2]}</b> (<span class="cop">${l[0]} ${l[1]}</span>) se lit « ${l[3]} » : ${l[4]} Exemple : <span class="cop">${l[7]}</span> (${l[8]}) = ${l[9]}.`}
+function letterQs(ls,pool){
+  pool=(pool&&pool.length>=4?pool:L).filter(x=>x[1]!=='ⲋ');const out=[];
+  const st=s=>String(s).toLowerCase().split(/[\s\/(),]+/).filter(Boolean),sc=(a,b)=>st(a).some(t=>st(b).includes(t));
+  ls.forEach(l=>{const P2=pool.filter(x=>x[1]===l[1]||!sc(x[3],l[3])),n=Math.min(3,P2.length-1);
+    out.push({q:'Quel son fait cette lettre ?',cop:l[1],o:[l[3],...distract(l[3],P2.map(x=>x[3]),n)],w:letterWhy(l),letter:l[1]});
+    out.push({q:`Quelle lettre se lit « ${l[3]} » ?`,o:[l[1],...distract(l[1],P2.map(x=>x[1]),n)],copO:1,w:letterWhy(l),letter:l[1]});
+    out.push({q:'Quelle est la minuscule de cette majuscule ?',cop:l[0],o:[l[1],...distract(l[1],pool.map(x=>x[1]),3)],copO:1,w:`<span class="cop">${l[0]}</span> (majuscule) = <span class="cop">${l[1]}</span> (minuscule) : ${l[2]}.`,letter:l[1]});
+    out.push({q:'Comment s\'appelle cette lettre ?',cop:l[0]+' '+l[1],o:[l[2],...distract(l[2],pool.map(x=>x[2]),3)],w:letterWhy(l),letter:l[1]});
+  });
+  return out;
+}
+function rowDistract(r,rows,f,n){let c=shuffle([...new Set(rows.filter(x=>x[0]!==r[0]&&x[f]!==r[f]&&!clashF(String(x[2]),String(r[2]))).map(x=>x[f]))]).slice(0,n);
+  if(c.length<n)c=c.concat(shuffle(W.filter(w=>!clashF(w[2],String(r[2]))).map(w=>w[f]).filter(x=>x!==r[f]&&!c.includes(x))).slice(0,n-c.length));return c}
+function rowQs(rows,mode){
+  const out=[];
+  rows.forEach(r=>{const why=`<span class="cop">${r[0]}</span> se lit « ${r[1]} » et veut dire « ${r[2]} ».`;
+    const types=mode==='read'?['read']:mode==='mean'?['mean']:['mean','read'];
+    types.forEach(t=>{
+      if(t==='mean')out.push({q:'Que veut dire ceci ?',cop:r[0],o:[r[2],...rowDistract(r,rows,2,3)],w:why});
+      else if(t==='read')out.push({q:'Comment cela se lit-il ?',cop:r[0],o:[r[1],...rowDistract(r,rows,1,3)],w:why});
+      else out.push({q:`Comment dit-on « ${r[2]} » ?`,o:[r[0],...rowDistract(r,rows,0,3)],copO:1,w:why});
+    })});
+  return out;
+}
+function pairsQ(rows){const pick=[],a=new Set(),f=new Set();
+  for(const r of shuffle(rows)){if(pick.length>=5)break;if(a.has(r[0])||f.has(r[2])||pick.some(p=>clashF(p[2],r[2]))||r[0].length>24||r[2].length>36)continue;a.add(r[0]);f.add(r[2]);pick.push(r)}
+  if(pick.length<4)return null;
+  return{type:'pairs',q:'Associez chaque mot copte à sa traduction',pairs:pick,o:['✓'],w:pick.map(r=>`<span class="cop">${r[0]}</span> (${r[1]}) = ${r[2]}`).join(' · ')}}
+function orderQ(r,pool){const words=r[0].split(/\s+/);if(words.length<2||words.length>8)return null;
+  const extra=shuffle([...new Set(pool.flatMap(x=>x[0].split(/\s+/)).filter(w=>!words.includes(w)))]).slice(0,2);
+  return{type:'order',q:`Remettez les mots dans l'ordre : « ${r[2]} »`,o:[r[0]],tiles:shuffle([...words,...extra]),w:`<span class="cop">${r[0]}</span> (${r[1]}) = ${r[2]}.`,
+    fallback:{q:'Que veut dire ceci ?',cop:r[0],o:[r[2],...shuffle(pool.filter(x=>x[2]!==r[2]).map(x=>x[2])).slice(0,2)],w:`<span class="cop">${r[0]}</span> (${r[1]}) = ${r[2]}.`}}}
+function gapQ(r,pool){const words=r[0].split(/\s+/);if(words.length<2)return null;const k=Math.random()*words.length|0,miss=words[k];
+  const others=shuffle([...new Set(pool.flatMap(x=>x[0].split(/\s+/)).filter(w=>w!==miss))]).slice(0,3);if(others.length<3)return null;
+  return{q:`Complétez : « ${r[2]} »`,cop:words.map((w,i)=>i===k?'＿＿':w).join(' '),o:[miss,...others],copO:1,w:`La ligne complète : <span class="cop">${r[0]}</span> (${r[1]}).`}}
+
+/* =========================================================
+   MOTEUR D'EXERCICES (QCM, phrase à remettre en ordre, paires)
+   ========================================================= */
+function prep(q){return{...q,ans:q.ans||q.o[0],opts:shuffle(q.o),done:0}}
+function reviewable(q){return q.type==='order'?q.fallback:q.type==='pairs'?null:q}
+function runSession(box,qs,opt){
+  const R={qs:qs.map(prep),k:0,n:qs.length,score:0,errors:[],requeued:false};box._R=R;
+  const head=q=>`${q.retry?'<div class="retrybar">🔁 On reprend vos erreurs</div>':''}
+    <div class="qhead"><span>${q.retry?'Rattrapage':(opt.label||'Question')+' '+(R.k+1)+' / '+R.n}</span><span>Bonnes réponses : ${R.score}${opt.onNew?' · <a href="#" class="qnew">🔀 Changer les questions</a>':''}</span></div>
+    <div class="meter" style="margin:-4px 0 14px"><i style="width:${Math.round(100*R.k/R.qs.length)}%"></i></div>
+    <p style="font-weight:600;font-size:18px">${q.q}</p>${q.cop?`<div class="cop qcop" style="font-size:${q.cop.length>24?30:q.cop.length>10?44:72}px">${q.cop}</div>`:''}${q.sub?`<p style="color:var(--main);font-weight:600">${q.sub}</p>`:''}`;
+  const show=()=>{
+    const q=R.qs[R.k];
+    box.innerHTML=`<div class="card qbox">${head(q)}<div class="qa"></div><div class="qfb"></div></div>`;
+    const qa=box.querySelector('.qa');
+    const nw=box.querySelector('.qnew');if(nw)nw.onclick=e=>{e.preventDefault();opt.onNew()};
+    if(q.type==='order'){
+      let ch=[];const draw=()=>{qa.innerHTML=`<div class="answerline cop">${ch.map((t,i)=>`<button class="tile" data-c="${i}">${q.tiles[t]}</button>`).join('')||'<span class="ph">Touchez les mots dans l\'ordre</span>'}</div>
+        <div class="tiles cop">${q.tiles.map((w,i)=>`<button class="tile ${ch.includes(i)?'used':''}" data-t="${i}">${w}</button>`).join('')}</div><button class="btn primary vchk" ${ch.length?'':'disabled'}>Vérifier</button>`;
+        qa.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{const i=+b.dataset.t;if(!ch.includes(i)){ch.push(i);draw()}});
+        qa.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{ch.splice(+b.dataset.c,1);draw()});
+        qa.querySelector('.vchk').onclick=()=>{const pick=ch.map(i=>q.tiles[i]).join(' '),ok=pick===q.ans;qa.querySelector('.answerline').classList.add(ok?'good':'bad');qa.querySelectorAll('button').forEach(b=>b.disabled=true);after(q,ok,pick)}};draw();
+    }else if(q.type==='pairs'){
+      const left=shuffle(q.pairs.map((_,i)=>i)),right=shuffle(q.pairs.map((_,i)=>i));let sL=null,sR=null,m=new Set(),miss=0;
+      const draw=()=>{qa.innerHTML=`<div class="pairs"><div>${left.map(i=>`<button class="tile cop ${m.has(i)?'ok':''} ${sL===i?'sel':''}" data-l="${i}" ${m.has(i)?'disabled':''}>${q.pairs[i][0]}</button>`).join('')}</div><div>${right.map(i=>`<button class="tile pr ${m.has(i)?'ok':''} ${sR===i?'sel':''}" data-r="${i}" ${m.has(i)?'disabled':''}>${q.pairs[i][2]}</button>`).join('')}</div></div><p style="font-size:13px;color:var(--muted)">Erreurs : ${miss}</p>`;
+        qa.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{sL=+b.dataset.l;test()});qa.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{sR=+b.dataset.r;test()})};
+      const test=()=>{if(sL!==null&&sR!==null){if(sL===sR)m.add(sL);else{miss++;[qa.querySelector(`[data-l="${sL}"]`),qa.querySelector(`[data-r="${sR}"]`)].forEach(x=>x&&x.classList.add('wrong'));setTimeout(()=>{sL=sR=null;draw()},450);return}sL=sR=null}
+        draw();if(m.size===q.pairs.length)after(q,miss<=1,miss?miss+' erreur(s)':'✓')};draw();
+    }else{
+      qa.innerHTML=`<div class="opts">${q.opts.map((o,j)=>`<button class="opt" data-j="${j}">${q.copO?`<span class="cop">${o}</span>`:o}</button>`).join('')}</div>`;
+      qa.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(q.done)return;const j=+b.dataset.j;qa.querySelectorAll('.opt').forEach(x=>{const o=q.opts[+x.dataset.j];if(o===q.ans)x.classList.add('good');else if(+x.dataset.j===j)x.classList.add('bad')});after(q,q.opts[j]===q.ans,q.opts[j])});
+    }
+  };
+  const after=(q,ok,pick)=>{
+    if(q.done)return;q.done=1;
+    if(!q.retry){if(ok)R.score++;else{R.errors.push({q,pick});const r=reviewable(q);if(r&&opt.review!==false)addReview(r)}}
+    if(opt.onAnswer)opt.onAnswer(q,ok);
+    const at=q.type==='pairs'?'':(q.copO||q.type==='order')?`<span class="cop" style="font-size:24px">${q.ans}</span>`:`« ${q.ans} »`;
+    box.querySelector('.qfb').innerHTML=`<div class="fb ${ok?'good':'bad'}"><b>${ok?'✓ Bonne réponse !':q.type==='pairs'?'✗ Trop d\'erreurs. Revoyez les paires :':'✗ La bonne réponse était '+at+'.'}</b><div style="margin-top:6px"><b>Explication :</b> ${q.w||''}</div></div>
+      <button class="btn primary nxt" style="margin-top:12px">Continuer ›</button>`;
+    box.querySelector('.nxt').onclick=next;
+  };
+  const next=()=>{R.k++;
+    if(R.k>=R.qs.length&&!R.requeued&&R.errors.length&&opt.retryErrors!==false){R.requeued=true;R.qs=R.qs.concat(R.errors.map(e=>({...e.q,done:0,retry:1,opts:shuffle(e.q.opts)})))}
+    if(R.k<R.qs.length)show();else opt.onEnd(R)};
+  show();return R;
+}
+function errorsHTML(R){return R.errors.length?`<h3 style="margin-top:24px">Vos erreurs (ajoutées à vos révisions)</h3>${R.errors.map(e=>`<div class="card err"><b>${e.q.q}</b> ${e.q.cop?`<span class="cop" style="font-size:24px">${e.q.cop}</span>`:''}
+  ${e.q.type==='pairs'?'':`<div>Votre réponse : <s>${e.q.copO||e.q.type==='order'?`<span class="cop">${e.pick}</span>`:e.pick}</s> → <b>${e.q.copO||e.q.type==='order'?`<span class="cop">${e.q.ans}</span>`:e.q.ans}</b></div>`}
+  <div style="color:var(--muted);margin-top:4px">${e.q.w||''}</div></div>`).join('')}`:''}
+
+/* =========================================================
+   COURS
+   ========================================================= */
+const wRows=c=>W.filter(w=>w[3]===c).map(w=>[w[0],w[1],w[2]]);
+const LS=s=>[...s].map(ch=>letterOf(ch));
+const UNITS=['Unité 1 · L\'alphabet','Unité 2 · Premiers mots','Unité 3 · Grammaire','Unité 4 · Nombres et phrases','Unité 5 · Les prières de l\'Église'];
+const COURSES=[
+ {id:'a1',u:0,title:'Les bases et ⲁ ⲃ ⲅ ⲇ ⲉ',goal:'Découvrir l\'écriture copte et vos 5 premières lettres.',learn:[
+   {t:'p',h:'Le copte est la langue des Égyptiens chrétiens, héritière directe de la langue des pharaons. Il s\'écrit <b>de gauche à droite</b>, comme le français, avec un alphabet tiré du <b>grec</b>, complété de 7 lettres égyptiennes.'},
+   {t:'p',h:'Chaque lettre existe en <b>majuscule</b> et en <b>minuscule</b>. Les textes s\'écrivent surtout en minuscules ; les noms propres et le début des prières prennent une majuscule.'},
+   {t:'letters',l:'ⲁⲃⲅⲇⲉ'},{t:'legend'},
+   {t:'tip',h:'Si vous connaissez l\'alphabet grec, vous avez déjà une grande longueur d\'avance : ⲁ = α, ⲃ = β, ⲅ = γ, ⲇ = δ, ⲉ = ε.'}],
+  auto:{letters:'ⲁⲃⲅⲇⲉ'},ex:[
+   {q:'Dans quel sens s\'écrit le copte ?',o:['De gauche à droite','De droite à gauche','De haut en bas'],w:'Comme le grec et le français, le copte s\'écrit de gauche à droite.'},
+   {q:'De quel alphabet vient la plupart des lettres coptes ?',o:['Du grec','De l\'arabe','Du latin'],w:'25 lettres viennent du grec ; 7 viennent de l\'écriture égyptienne démotique.'},
+   {q:'Comment l\'Église prononce-t-elle la lettre ⲃ (vida) ?',cop:'ⲃ',o:['« v » (« b » en fin de mot)','toujours « b »','« p »'],w:'Vida se prononce « v », sauf en fin de mot ou devant une consonne.'}]},
+ {id:'a2',u:0,title:'ⲍ ⲏ ⲑ ⲓ ⲕ',goal:'Apprendre cinq nouvelles lettres, dont ⲏ et ⲑ.',learn:[
+   {t:'letters',l:'ⲍⲏⲑⲓⲕ'},
+   {t:'tip',h:'ⲏ (ita) est un « ē » long qu\'on prononce « i » à l\'église : ⲏⲓ (maison) se dit presque « ii ». ⲑ (thita) est le « th » anglais de « think ».'},
+   {t:'p',h:'La lettre ⲋ (sou) n\'est utilisée que comme <b>chiffre</b> : elle vaut 6.'}],
+  auto:{letters:'ⲍⲏⲑⲓⲕ',extra:'ⲁⲃⲅⲇⲉ'},ex:[{q:'Comment se prononce ⲏ à l\'église ?',cop:'ⲏ',o:['« i » (long)','« h »','« n »'],w:'Malgré sa forme de « H », ⲏ est une voyelle : « ē », dite « i ».'}]},
+ {id:'a3',u:0,title:'ⲗ ⲙ ⲛ ⲝ ⲟ',goal:'Reconnaître ⲗ ⲙ ⲛ ⲝ ⲟ.',learn:[{t:'letters',l:'ⲗⲙⲛⲝⲟ'},{t:'tip',h:'Ne confondez pas ⲛ (ni, « n ») et ⲏ (ita, « i ») : ils se ressemblent, regardez bien la barre !'}],
+  auto:{letters:'ⲗⲙⲛⲝⲟ',extra:'ⲏⲑⲓⲕ'},ex:[{q:'Quelle lettre se lit « n » ?',o:['ⲛ','ⲏ','ⲙ'],copO:1,w:'ⲛ (ni) = n. ⲏ (ita) est une voyelle, « i ».'}]},
+ {id:'a4',u:0,title:'ⲡ ⲣ ⲥ ⲧ ⲩ',goal:'Apprendre ⲡ ⲣ ⲥ ⲧ ⲩ et le groupe ⲟⲩ.',learn:[{t:'letters',l:'ⲡⲣⲥⲧⲩ'},
+   {t:'tip',h:'ⲩ apparaît surtout dans le groupe <b>ⲟⲩ</b>, qui se lit « ou » : ⲛⲟⲩⲃ (noub, or), ⲟⲩⲣⲟ (ouro, roi). Attention : ⲣ (ro) se lit « r », pas « p » !'}],
+  auto:{letters:'ⲡⲣⲥⲧⲩ',extra:'ⲗⲙⲛⲟ'},ex:[{q:'Comment se lit le groupe ⲟⲩ ?',cop:'ⲟⲩ',o:['« ou »','« oy »','« o »'],w:'ⲟ + ⲩ = « ou » (ou « w » devant une voyelle).'},{q:'Quelle lettre se lit « r » ?',o:['ⲣ','ⲡ','ⲫ'],copO:1,w:'ⲣ (ro) = r. Elle ressemble au « p » latin, mais c\'est un « r » !'}]},
+ {id:'a5',u:0,title:'ⲫ ⲭ ⲯ ⲱ',goal:'Finir les lettres grecques.',learn:[{t:'letters',l:'ⲫⲭⲯⲱ'},{t:'tip',h:'ⲫ (phi) se dit « f » à l\'église : ⲫⲉ (ciel). ⲱ est un « o » long : ⲱⲓⲕ (ōik, pain).'}],
+  auto:{letters:'ⲫⲭⲯⲱ',extra:'ⲡⲣⲥⲧ'},ex:[{q:'Comment se dit ⲫ à l\'église ?',cop:'ⲫ',o:['« f »','« p »','« b »'],w:'ⲫ (phi) = ph, prononcé « f ».'}]},
+ {id:'a6',u:0,title:'Les lettres égyptiennes ϣ ϥ ϧ ϩ',goal:'Découvrir les lettres venues de l\'égyptien démotique.',learn:[
+   {t:'p',h:'Le grec n\'avait pas de lettres pour certains sons égyptiens. Les Coptes ont donc emprunté 7 signes à l\'<b>écriture démotique</b>, la dernière forme des hiéroglyphes.'},
+   {t:'letters',l:'ϣϥϧϩ'},{t:'tip',h:'ϧ (khai) n\'existe qu\'en bohaïrique, le copte de l\'Église : ϧⲉⲛ (khen, « dans ») est l\'un des mots les plus fréquents des prières.'}],
+  auto:{letters:'ϣϥϧϩ',extra:'ⲫⲭⲱⲥ'},ex:[{q:'D\'où viennent les lettres ϣ ϥ ϧ ϩ ϫ ϭ ϯ ?',o:['De l\'écriture égyptienne démotique','Du grec','De l\'hébreu'],w:'Elles viennent du démotique, pour noter des sons inconnus du grec.'}]},
+ {id:'a7',u:0,title:'ϫ ϭ ϯ',goal:'Terminer l\'alphabet.',learn:[{t:'letters',l:'ϫϭϯ'},{t:'tip',h:'ϯ vaut à elle seule la syllabe « ti » : ϯⲛⲟⲩ (tinou, maintenant). Bravo : vous connaissez les 32 lettres !'}],
+  auto:{letters:'ϫϭϯ',extra:'ϣϥϧϩ'},ex:[{q:'Que vaut la lettre ϯ ?',cop:'ϯ',o:['la syllabe « ti »','« t »','« f »'],w:'ϯ (ti) note la syllabe entière « ti ».'}]},
+ {id:'a8',u:0,title:'Les signes : jinkim et abréviations',goal:'Lire le petit trait (jinkim) et les noms sacrés abrégés.',learn:[
+   {t:'p',h:'Le <b>jinkim</b> est un petit trait ( ̀ ) au-dessus d\'une lettre. Sur une consonne, il ajoute un « e » <b>avant</b> elle : ⲛ̀ = « en », ⲙ̀ⲫⲟⲟⲩ = « emphoou » (aujourd\'hui). Sur une voyelle, il en fait une syllabe à part : ⲁ̀ⲙⲏⲛ.'},
+   {t:'p',h:'Les noms sacrés sont souvent <b>abrégés</b> sous une barre : Ⲓⲏ̅ⲥ̅ = Ⲓⲏⲥⲟⲩⲥ (Jésus), Ⲡⲭ̅ⲥ̅ = Ⲡⲓⲭ̀ⲣⲓⲥⲧⲟⲥ (le Christ). La même barre sert aussi à écrire les chiffres : ⲓ̅ = 10.'},
+   {t:'table',title:'Exemples',rows:[['ⲛ̀ϫⲉ','enje','(introduit le sujet)'],['ⲙ̀ⲫⲟⲟⲩ','emphoou','aujourd\'hui'],['ⲉ̀ⲃⲟⲗ','ebol','dehors'],['Ⲓⲏ̅ⲥ̅','Iēsous','Jésus (abrégé)']]}],
+  ex:[{q:'Que fait le jinkim ( ̀ ) sur une consonne ?',o:['Il ajoute un « e » avant elle','Il double la lettre','Il la rend muette'],w:'ⲛ̀ se lit « en », ⲙ̀ « em ».'},
+   {q:'Que signifie la barre sur Ⲓⲏ̅ⲥ̅ ?',cop:'Ⲓⲏ̅ⲥ̅',o:['Un nom sacré abrégé (Jésus)','Une voyelle longue','Un chiffre'],w:'Les noms sacrés sont abrégés sous une barre.'}]},
+ {id:'m1',u:1,title:'La famille et les personnes',goal:'Nommer les membres de la famille.',learn:[{t:'table',title:'La famille',rows:wRows('Famille')},{t:'table',title:'Les personnes',rows:wRows('Personnes')}],ex:[]},
+ {id:'m2',u:1,title:'Le corps',goal:'Nommer les parties du corps.',learn:[{t:'table',title:'Le corps',rows:wRows('Corps')},{t:'tip',h:'ϩⲏⲧ (hēt, cœur) est un mot très fréquent dans les prières et les hymnes.'}],ex:[]},
+ {id:'m3',u:1,title:'La nature',goal:'Le ciel, la terre, l\'eau et le Nil.',learn:[{t:'table',title:'La nature',rows:wRows('Nature')},{t:'tip',h:'ⲫⲉ (ciel) et ⲕⲁϩⲓ (terre) reviennent dans le Notre Père : « ϧⲉⲛ ⲧ̀ⲫⲉ ⲛⲉⲙ ϩⲓϫⲉⲛ ⲡⲓⲕⲁϩⲓ », au ciel et sur la terre.'}],ex:[]},
+ {id:'m4',u:1,title:'La vie et l\'Église',goal:'Maison, pain, Égypte, église…',learn:[{t:'table',title:'Vocabulaire',rows:wRows('Vie et Église')},{t:'tip',h:'Le mot ⲣⲉⲙⲛ̀ⲭⲏⲙⲓ (remenkhēmi, « homme d\'Égypte », Égyptien) a donné… le mot « copte » vient lui-même du grec Aigyptios, « Égyptien ».'}],ex:[]},
+ {id:'m5',u:1,title:'Les animaux',goal:'Nommer quelques animaux.',learn:[{t:'table',title:'Les animaux',rows:wRows('Animaux')}],ex:[]},
+ {id:'m6',u:1,title:'Le temps',goal:'Jour, nuit, aujourd\'hui, demain…',learn:[{t:'table',title:'Le temps',rows:wRows('Temps')}],ex:[]},
+ {id:'g1',u:2,title:'L\'article : le, la, les',goal:'Dire « l\'homme, la femme, les hommes ».',learn:[
+   {t:'p',h:'L\'article se colle <b>devant</b> le nom : <b>ⲡⲓ-</b> (masculin), <b>ϯ-</b> (féminin), <b>ⲛⲓ-</b> (pluriel). Le copte n\'a souvent pas d\'autre marque du pluriel que l\'article !'},
+   {t:'table',title:'Exemples',rows:[['ⲡⲓⲣⲱⲙⲓ','pirōmi','l\'homme'],['ϯⲥϩⲓⲙⲓ','tishimi','la femme'],['ⲛⲓⲣⲱⲙⲓ','nirōmi','les hommes'],['ⲡⲓⲕⲁϩⲓ','pikahi','la terre'],['ⲛⲓⲫⲏⲟⲩⲓ','niphēoui','les cieux']]},
+   {t:'tip',h:'Il existe aussi un article court, ⲡ̀/ⲫ̀ et ⲧ̀/ⲑ̀ : ⲧ̀ⲫⲉ (le ciel), Ⲫ̀ⲓⲱⲧ (le Père). On l\'utilise pour les choses uniques ou très proches.'}],
+  ex:[{q:'Comment dit-on « la femme » ?',o:['ϯⲥϩⲓⲙⲓ','ⲡⲓⲥϩⲓⲙⲓ','ⲛⲓⲥϩⲓⲙⲓ'],copO:1,w:'ϯ- = article féminin.'},{q:'Que veut dire ⲛⲓⲣⲱⲙⲓ ?',cop:'ⲛⲓⲣⲱⲙⲓ',o:['les hommes','l\'homme','un homme'],w:'ⲛⲓ- = article pluriel.'},{q:'Quel article est masculin ?',o:['ⲡⲓ-','ϯ-','ⲛⲓ-'],copO:1,w:'ⲡⲓ- masculin, ϯ- féminin, ⲛⲓ- pluriel.'}]},
+ {id:'g2',u:2,title:'Un, une, des',goal:'L\'article indéfini ⲟⲩ- et ϩⲁⲛ-.',learn:[
+   {t:'table',title:'Exemples',rows:[['ⲟⲩⲣⲱⲙⲓ','ourōmi','un homme'],['ⲟⲩⲥϩⲓⲙⲓ','oushimi','une femme'],['ϩⲁⲛⲣⲱⲙⲓ','hanrōmi','des hommes'],['ⲟⲩⲏⲓ','ouēi','une maison']]},
+   {t:'tip',h:'ⲟⲩ- sert pour « un » et « une » ; ϩⲁⲛ- pour « des ».'}],
+  ex:[{q:'Comment dit-on « des hommes » ?',o:['ϩⲁⲛⲣⲱⲙⲓ','ⲛⲓⲣⲱⲙⲓ','ⲟⲩⲣⲱⲙⲓ'],copO:1,w:'ϩⲁⲛ- = des. ⲛⲓ- = les.'}]},
+ {id:'g3',u:2,title:'Les pronoms',goal:'Je, tu, il, elle, nous…',learn:[
+   {t:'table',title:'Les pronoms',rows:[['ⲁⲛⲟⲕ','anok','je, moi'],['ⲛ̀ⲑⲟⲕ','enthok','tu (homme)'],['ⲛ̀ⲑⲟ','entho','tu (femme)'],['ⲛ̀ⲑⲟϥ','enthof','il, lui'],['ⲛ̀ⲑⲟⲥ','enthos','elle'],['ⲁⲛⲟⲛ','anon','nous'],['ⲛ̀ⲑⲱⲧⲉⲛ','enthōten','vous'],['ⲛ̀ⲑⲱⲟⲩ','enthōou','ils, elles']]},
+   {t:'tip',h:'Repérez les finales : -ϥ (f) = lui, -ⲥ (s) = elle. On les retrouve partout : ⲁϥⲧⲱⲛϥ, « il s\'est levé ».'}],
+  ex:[{q:'Que veut dire ⲛ̀ⲑⲟⲥ ?',cop:'ⲛ̀ⲑⲟⲥ',o:['elle','il','nous'],w:'-ⲥ = féminin : enthos = elle.'}]},
+ {id:'g4',u:2,title:'Mon, ton, son',goal:'Les articles possessifs.',learn:[
+   {t:'p',h:'« Mon, ton, son… » remplacent l\'article devant le nom : <b>ⲡⲁ-</b> (mon), <b>ⲡⲉⲕ-</b> (ton), <b>ⲡⲉϥ-</b> (son, à lui), <b>ⲡⲉⲥ-</b> (son, à elle), <b>ⲡⲉⲛ-</b> (notre). Pour un mot féminin, ⲡ devient ⲧ (ⲧⲁ-, ⲧⲉⲕ-…) ; au pluriel, ⲛ (ⲛⲁ-, ⲛⲉⲕ-…).'},
+   {t:'table',title:'Exemples',rows:[['ⲡⲁⲓⲱⲧ','paiōt','mon père'],['ⲧⲁⲙⲁⲩ','tamau','ma mère'],['ⲡⲉⲕⲣⲁⲛ','pekran','ton nom'],['ⲡⲉⲛⲓⲱⲧ','peniōt','notre père'],['ⲧⲉⲕⲙⲉⲧⲟⲩⲣⲟ','tekmetouro','ton royaume'],['ⲛⲁⲥⲛⲏⲟⲩ','nasnēou','mes frères']]},
+   {t:'tip',h:'Le Notre Père commence par ⲡⲉⲛⲓⲱⲧ : ⲡⲉⲛ- (notre) + ⲓⲱⲧ (père).'}],
+  ex:[{q:'Comment dit-on « mon père » ?',o:['ⲡⲁⲓⲱⲧ','ⲡⲉⲕⲓⲱⲧ','ⲡⲉⲛⲓⲱⲧ'],copO:1,w:'ⲡⲁ- = mon.'},{q:'Pourquoi dit-on ⲧⲁⲙⲁⲩ et pas ⲡⲁⲙⲁⲩ ?',o:['Parce que ⲙⲁⲩ (mère) est féminin','C\'est une faute','Parce que c\'est un pluriel'],w:'Avec un nom féminin, ⲡ- devient ⲧ- : ⲧⲁⲙⲁⲩ.'}]},
+ {id:'g5',u:2,title:'« C\'est… » : ⲡⲉ, ⲧⲉ, ⲛⲉ',goal:'Faire une phrase sans verbe.',learn:[
+   {t:'p',h:'Pour dire « c\'est », on ajoute <b>ⲡⲉ</b> (masculin), <b>ⲧⲉ</b> (féminin) ou <b>ⲛⲉ</b> (pluriel) après le nom.'},
+   {t:'table',title:'Exemples',rows:[['ⲟⲩⲣⲱⲙⲓ ⲡⲉ','ourōmi pe','C\'est un homme.'],['ⲟⲩⲥϩⲓⲙⲓ ⲧⲉ','oushimi te','C\'est une femme.'],['Ⲡⲁⲣⲁⲛ ⲡⲉ Ⲙⲁⲣⲕⲟⲥ','paran pe Markos','Mon nom est Marc.'],['Ⲡⲉⲕⲣⲁⲛ ⲡⲉ ⲛⲓⲙ','pekran pe nim','Quel est ton nom ?']]}],
+  ex:[{q:'Comment dit-on « C\'est une femme » ?',o:['ⲟⲩⲥϩⲓⲙⲓ ⲧⲉ','ⲟⲩⲥϩⲓⲙⲓ ⲡⲉ','ϯⲥϩⲓⲙⲓ ⲛⲉ'],copO:1,w:'Féminin → ⲧⲉ.'}]},
+ {id:'g6',u:2,title:'Le présent',goal:'Conjuguer un verbe au présent.',learn:[
+   {t:'p',h:'Au présent, un petit <b>préfixe</b> indique la personne : ϯ- (je), ⲭ- (tu), ϥ- (il), ⲥ- (elle), ⲧⲉⲛ- (nous), ⲥⲉ- (ils).'},
+   {t:'table',title:'ⲥⲱⲧⲉⲙ (écouter)',rows:[['ϯⲥⲱⲧⲉⲙ','tisōtem','j\'écoute'],['ⲭ̀ⲥⲱⲧⲉⲙ','eksōtem','tu écoutes (homme)'],['ⲧⲉⲥⲱⲧⲉⲙ','tesōtem','tu écoutes (femme)'],['ϥ̀ⲥⲱⲧⲉⲙ','efsōtem','il écoute'],['ⲥ̀ⲥⲱⲧⲉⲙ','essōtem','elle écoute'],['ⲧⲉⲛⲥⲱⲧⲉⲙ','tensōtem','nous écoutons'],['ⲥⲉⲥⲱⲧⲉⲙ','sesōtem','ils écoutent']]}],
+  ex:[{q:'Comment dit-on « j\'écoute » ?',o:['ϯⲥⲱⲧⲉⲙ','ϥ̀ⲥⲱⲧⲉⲙ','ⲥⲉⲥⲱⲧⲉⲙ'],copO:1,w:'ϯ- = je.'},{q:'Que veut dire ϯⲙⲉⲓ ?',cop:'ϯⲙⲉⲓ',o:['j\'aime','il aime','nous aimons'],w:'ϯ- (je) + ⲙⲉⲓ (aimer).'}]},
+ {id:'g7',u:2,title:'Le passé',goal:'Raconter au passé.',learn:[
+   {t:'p',h:'Au passé, le préfixe commence par <b>ⲁ-</b> : ⲁⲓ- (j\'ai), ⲁⲕ- (tu as), ⲁϥ- (il a), ⲁⲥ- (elle a), ⲁⲛ- (nous avons), ⲁⲩ- (ils ont).'},
+   {t:'table',title:'Exemples',rows:[['ⲁⲓⲥⲱⲧⲉⲙ','aisōtem','j\'ai écouté'],['ⲁϥⲥⲱⲧⲉⲙ','afsōtem','il a écouté'],['ⲁⲥⲥⲱⲧⲉⲙ','assōtem','elle a écouté'],['ⲁⲩⲥⲱⲧⲉⲙ','ausōtem','ils ont écouté'],['ⲁϥⲧⲱⲛϥ','aftōnf','il s\'est levé, il est ressuscité']]},
+   {t:'tip',h:'Vous connaissez déjà une phrase au passé : Ⲡⲓⲭ̀ⲣⲓⲥⲧⲟⲥ ⲁϥⲧⲱⲛϥ, « le Christ est ressuscité » (ⲁϥ- = il a + ⲧⲱⲛϥ = le lever).'}],
+  ex:[{q:'Quel préfixe veut dire « il a » ?',o:['ⲁϥ-','ϥ̀-','ⲁⲓ-'],copO:1,w:'ⲁϥ- = passé, 3e personne masculin.'}]},
+ {id:'g8',u:2,title:'La négation',goal:'Dire « ne… pas ».',learn:[
+   {t:'p',h:'Au présent, on encadre : <b>ⲛ̀</b> … <b>ⲁⲛ</b>. Au passé, on utilise <b>ⲙ̀ⲡⲉ-</b>.'},
+   {t:'table',title:'Exemples',rows:[['Ⲛ̀ϯⲥⲱⲧⲉⲙ ⲁⲛ','entisōtem an','Je n\'écoute pas.'],['ⲙ̀ⲡⲉϥⲥⲱⲧⲉⲙ','empefsōtem','Il n\'a pas écouté.'],['ⲛ̀ⲟⲩⲣⲱⲙⲓ ⲁⲛ ⲡⲉ','enourōmi an pe','Ce n\'est pas un homme.']]}],
+  ex:[{q:'Comment encadre-t-on un verbe au présent pour le nier ?',o:['ⲛ̀ … ⲁⲛ','ⲙ̀ⲡⲉ- …','ϯ- …'],w:'ⲛ̀ϯⲥⲱⲧⲉⲙ ⲁⲛ = je n\'écoute pas.'}]},
+ {id:'g9',u:2,title:'Les verbes utiles',goal:'Connaître 11 verbes courants.',learn:[{t:'table',title:'Les verbes',rows:wRows('Verbes')},{t:'tip',h:'Avec ϯ- devant, vous dites déjà beaucoup : ϯⲛⲁⲩ (je vois), ϯⲧⲱⲃϩ (je prie), ϯⲥϧⲁⲓ (j\'écris).'}],ex:[]},
+ {id:'n1',u:3,title:'Les nombres',goal:'Compter de 1 à 10, et lire les chiffres-lettres.',learn:[
+   {t:'table',mode:'mean',title:'Les nombres',rows:NUMS.map(n=>[n[0],n[1],String(n[2])])},
+   {t:'p',h:'Les chiffres s\'écrivent avec des <b>lettres surmontées d\'une barre</b>, comme en grec : ⲁ̅ = 1, ⲃ̅ = 2, ⲓ̅ = 10, ⲕ̅ = 20, ⲣ̅ = 100. On les combine : ⲓ̅ⲃ̅ = 12. Regardez l\'heure en haut à droite de l\'application !'},
+   {t:'table',mode:'mean',title:'Chiffres-lettres',rows:NUMS.map(n=>[n[3],n[1],String(n[2])])}],
+  ex:[{q:'Que vaut ⲓ̅ⲃ̅ ?',cop:'ⲓ̅ⲃ̅',o:['12','21','3'],w:'ⲓ̅ = 10 et ⲃ̅ = 2 : 12.'}]},
+ {id:'n2',u:3,title:'Saluer et remercier',goal:'Les salutations de tous les jours.',learn:[{t:'table',title:'Salutations',rows:P.filter(p=>p[0]==='Salutations').map(p=>[p[1],p[2],p[3]])},{t:'tip',h:'Ϣⲉⲡϩ̀ⲙⲟⲧ (shep-hmot, merci) signifie littéralement « reçois la grâce ».'}],ex:[]},
+ {id:'n3',u:3,title:'Se présenter',goal:'Dire son nom et parler de soi.',learn:[{t:'table',title:'Phrases',rows:P.filter(p=>p[0]==='Se présenter').map(p=>[p[1],p[2],p[3]])}],ex:[]},
+ {id:'l1',u:4,title:'Les mots de la liturgie',goal:'Comprendre les mots qui reviennent sans cesse dans les prières.',learn:[{t:'table',title:'Vocabulaire de l\'Église',rows:wRows('Liturgie')},{t:'tip',h:'Beaucoup de ces mots sont grecs (ⲗⲟⲅⲟⲥ, ⲥ̀ⲧⲁⲩⲣⲟⲥ, ⲉⲩⲁⲅⲅⲉⲗⲓⲟⲛ) : le copte a intégré des centaines de mots grecs, surtout pour la foi et l\'Église.'}],ex:[]},
+ {id:'l0',u:4,title:'Suivre le livret de la messe',goal:'Savoir qui parle et lire les abréviations du livret.',learn:[
+   {t:'p',h:'Dans le livret, chaque passage commence par le nom de celui qui le dit. Repérez-les pour savoir quand c\'est à l\'assemblée de répondre !'},
+   {t:'table',title:'Qui parle ?',rows:[['Ⲡⲓⲟⲩⲏⲃ','piouēb','le prêtre'],['ⲠⲓⲆⲓⲁⲕⲱⲛ','pidiakōn','le diacre'],['Ⲡⲓⲗⲁⲟⲥ','pilaos','l\'assemblée (le peuple)']]},
+   {t:'p',h:'Les noms sacrés et quelques mots fréquents sont <b>abrégés sous une barre</b>.'},
+   {t:'table',title:'Les abréviations du livret',rows:[['Ⲡⲭ̅ⲥ̅','Pikhristos','le Christ'],['Ⲓⲏ̅ⲥ̅','Iēsous','Jésus'],['Ⲡⲉⲛϭ̅ⲥ̅','Penchois','notre Seigneur'],['ⲪϮ','Phnouti','Dieu'],['ⲁⲗ̅','allēlouia','alléluia'],['(ⲅ̅)','3 fois','à dire trois fois']]},
+   {t:'tip',h:'Le signe « : » dans le texte copte marque une pause, comme une virgule chantée.'}],
+  ex:[{q:'Que veut dire Ⲡⲓⲗⲁⲟⲥ en tête d\'un passage ?',cop:'Ⲡⲓⲗⲁⲟⲥ',o:['C\'est à l\'assemblée de répondre','C\'est le prêtre qui parle','C\'est le diacre qui parle'],w:'Ⲡⲓⲗⲁⲟⲥ = le peuple, l\'assemblée.'},{q:'Que signifie (ⲅ̅) après une réponse ?',cop:'Ⲕⲩⲣⲓⲉ ⲉ̀ⲗⲉⲏ̀ⲥⲟⲛ (ⲅ̅)',o:['La dire trois fois','La dire une fois','La chanter en grec'],w:'ⲅ̅ = 3 : la réponse se dit trois fois.'},{q:'Que veut dire l\'abréviation Ⲡⲉⲛϭ̅ⲥ̅ ?',cop:'Ⲡⲉⲛϭ̅ⲥ̅',o:['notre Seigneur','le Christ','Jésus'],w:'Ⲡⲉⲛϭ̅ⲥ̅ = Ⲡⲉⲛϭⲟⲓⲥ : ⲡⲉⲛ- (notre) + ϭⲟⲓⲥ (Seigneur).'}]},
+ {id:'l2',u:4,title:'Le grec dans la liturgie',goal:'Reconnaître les passages en grec écrits en lettres coptes.',learn:[
+   {t:'p',h:'La liturgie copte mêle deux langues : le <b>copte</b> et le <b>grec</b>, écrit lui aussi avec l\'alphabet copte. Des réponses comme Ⲕⲩⲣⲓⲉ ⲉ̀ⲗⲉⲏ̀ⲥⲟⲛ, Ⲁ̀ⲝⲓⲟⲛ ⲕⲉ ⲇⲓⲕⲉⲟⲛ ou Ⲇⲟⲝⲁ ⲥⲓ Ⲕⲩⲣⲓⲉ sont du grec.'},
+   {t:'p',h:'Comment les repérer ? Le grec n\'utilise <b>jamais</b> les 7 lettres égyptiennes (ϣ ϥ ϧ ϩ ϫ ϭ ϯ), et ses mots se terminent souvent en <b>-ⲟⲥ, -ⲟⲛ, -ⲏ, -ⲓⲁ</b>.'},
+   {t:'table',title:'Réponses en grec',rows:[['Ⲕⲩⲣⲓⲉ ⲉ̀ⲗⲉⲏ̀ⲥⲟⲛ','kyrie eleēson','Seigneur, prends pitié'],['Ⲇⲟⲝⲁ ⲥⲓ Ⲕⲩⲣⲓⲉ','doxa si Kyrie','Gloire à toi, Seigneur'],['Ⲁ̀ⲝⲓⲟⲛ ⲕⲉ ⲇⲓⲕⲉⲟⲛ','axion ke dikeon','C\'est digne et juste'],['Ⲕⲉ ⲧⲱ ⲡ̀ⲛⲉⲩⲙⲁⲧⲓ ⲥⲟⲩ','ke tō pneumati sou','Et avec ton esprit']]},
+   {t:'tip',h:'La même réponse existe souvent en copte : « Et avec ton esprit » se dit Ⲟⲩⲟϩ ⲛⲉⲙ ⲡⲉⲕⲡ̀ⲛⲉⲩⲙⲁ en copte et Ⲕⲉ ⲧⲱ ⲡ̀ⲛⲉⲩⲙⲁⲧⲓ ⲥⲟⲩ en grec.'}],
+  ex:[{q:'Laquelle de ces lignes est en grec ?',o:['Ⲁ̀ⲝⲓⲟⲛ ⲕⲉ ⲇⲓⲕⲉⲟⲛ','Ϧⲉⲛ ⲟⲩϩⲓⲣⲏⲛⲏ','Ϯⲥⲱⲧⲉⲙ'],copO:1,w:'Axion ke dikeon est grec. Les deux autres contiennent des lettres égyptiennes (ϧ, ϩ, ϯ) : elles sont coptes.'},
+   {q:'Quelles lettres n\'apparaissent jamais dans un mot grec ?',o:['ϣ ϥ ϧ ϩ ϫ ϭ ϯ','ⲁ ⲉ ⲓ ⲟ','ⲕ ⲗ ⲙ ⲛ'],w:'Les 7 lettres d\'origine égyptienne ne servent qu\'aux mots coptes.'},
+   {q:'Que veut dire Ⲇⲟⲝⲁ ⲥⲓ Ⲕⲩⲣⲓⲉ ?',cop:'Ⲇⲟⲝⲁ ⲥⲓ Ⲕⲩⲣⲓⲉ',o:['Gloire à toi, Seigneur','Seigneur, prends pitié','Paix à tous'],w:'doxa = gloire, Kyrie = Seigneur.'}]},
+ ...PRAYERS.map(pr=>({id:'p-'+pr.id,u:4,type:'prayer',title:pr.title,goal:'Lire, comprendre et retenir cette prière.',learn:[{t:'prayer',p:pr},{t:'table',mode:'mean',title:'Ligne par ligne',rows:pr.lines}],ex:[]})),
+];
+// bilans d'unité
+UNITS.forEach((u,ui)=>{let last=-1;COURSES.forEach((c,i)=>{if(c.u===ui)last=i});COURSES.splice(last+1,0,{id:'chk'+ui,u:ui,type:'checkpoint',title:'Bilan de l\'unité '+(ui+1),goal:'15 questions sur toute l\'unité (80 % pour valider).',learn:[{t:'checkpoint'}],ex:[]})});
+
+function genAuto(c){
+  const a=c.auto||{},out=[];
+  if(a.letters)out.push(...letterQs(LS(a.letters),LS(a.letters+(a.extra||''))));
+  c.learn.forEach(b=>{if(b.t==='table'&&b.mode!=='none'&&b.rows.length>=3)out.push(...rowQs(b.rows,b.mode))});
+  return out;
+}
+function buildSession(c){
+  const hand=shuffle(c.ex.map(e=>({...e})));let qs=hand.slice(0,7);
+  const key=q=>q.q+'|'+(q.cop||'')+'|'+q.o[0],seen=new Set(qs.map(key));
+  const ci=COURSES.indexOf(c);let review=[];for(let k=ci-1;k>=0&&review.length<20;k--)review=review.concat(shuffle(genAuto(COURSES[k])).slice(0,4));
+  for(const q of [...shuffle(genAuto(c)),...hand.slice(7),...review.map(q=>({...q,q:'Révision · '+q.q}))]){if(qs.length>=10)break;if(seen.has(key(q)))continue;seen.add(key(q));qs.push(q)}
+  const rows=[];c.learn.forEach(b=>{if(b.t==='table'&&b.mode!=='none')rows.push(...b.rows)});
+  const hs=new Set(hand),slots=qs.map((q,i)=>hs.has(q)?-1:i).filter(i=>i>=0);
+  const pq=rows.length>=4?pairsQ(rows):null,multi=rows.filter(r=>r[0].split(/\s+/).length>=2);
+  if(pq&&slots.length)qs[slots.pop()]=pq;
+  return shuffle(qs);
+}
+function buildCheckpoint(c){const ls=COURSES.filter(x=>x.u===c.u&&x.type!=='checkpoint');const out=[],seen=new Set();let g=0;
+  while(out.length<15&&g++<300){const x=ls[g%ls.length];const q=shuffle(buildSession(x))[0];const k=q.q+'|'+(q.cop||'')+'|'+q.o[0];if(!seen.has(k)){seen.add(k);out.push(q)}}return out}
+
+/* ---- progression ---- */
+const lesson=i=>S.lessons[COURSES[i].id]||{};
+const unlocked=i=>S.unlockAll||i===0||lesson(i).done||lesson(i-1).done||COURSES[i].u<(S.placed||0);
+const doneCount=()=>COURSES.filter((_,i)=>lesson(i).done).length;
+function nextLesson(){const i=COURSES.findIndex((_,i)=>!lesson(i).done&&unlocked(i));return i<0?0:i}
+const kind=c=>c.type==='checkpoint'?'Bilan':c.type==='prayer'?'Prière':'Cours';
+function icon(c,st,ok,i){if(!ok)return'🔒';if(c.type==='checkpoint')return st.done?'🏆':'🏁';if(c.type==='prayer')return st.done?'✝':'☩';if(st.best===100)return'⭐';if(st.done)return'✓';return i+1}
+
+function renderCourseList(){
+  const d=doneCount(),n=nextLesson();
+  let h=`<div class="card ctop"><div style="flex:1;min-width:220px"><h2 style="margin:0">Votre progression</h2><p style="margin:4px 0 0;color:var(--muted)">${d} étape${d>1?'s':''} sur ${COURSES.length}</p><div class="meter" style="height:10px"><i style="width:${Math.round(100*d/COURSES.length)}%"></i></div></div>
+    <a class="btn primary" href="#cours-${n+1}">${d?'Continuer':'Commencer'} ›</a></div>
+    <div class="row" style="justify-content:space-between"><button class="btn small" id="placeBtn">🎯 Test de niveau</button><button class="btn small" id="viewBtn">${S.listView?'🗺 Vue chemin':'☰ Vue liste'}</button></div>`;
+  UNITS.forEach((u,ui)=>{const items=COURSES.map((c,i)=>[c,i]).filter(([c])=>c.u===ui),ud=items.filter(([,i])=>lesson(i).done).length;
+    h+=`<div class="unithead u${ui%4}"><div><small>UNITÉ ${ui+1}</small><b>${u.replace(/^Unité \d+ · /,'')}</b></div><span>${ud} / ${items.length}</span></div>`;
+    if(S.listView){h+='<div class="grid">'+items.map(([c,i])=>{const st=lesson(i),ok=unlocked(i);return`<div class="card crow ${ok?'':'locked'}" data-i="${i}"><div class="cn">${icon(c,st,ok,i)}</div><div style="flex:1"><b>${kind(c)} · ${c.title}</b><p>${c.goal}</p></div>${st.best!=null?`<span class="pill ${st.done?'ok':''}">${st.best} %</span>`:''}</div>`}).join('')+'</div>'}
+    else{h+='<div class="lpath">'+items.map(([c,i],k)=>{const st=lesson(i),ok=unlocked(i);return`<div class="pnode" style="transform:translateX(${Math.round(Math.sin(k*.85)*80)}px)">${i===n?'<div class="pstart">COMMENCER</div>':''}
+      <button class="pbtn ${c.type||''} ${st.done?'done':''} ${ok?'':'locked'} ${i===n?'cur':''} ${st.best===100?'perfect':''}" data-i="${i}">${icon(c,st,ok,i)}</button><div class="plab">${c.title}</div></div>`}).join('')+'</div>'}});
+  h+=`<p style="text-align:center;margin-top:24px;font-size:14px;color:var(--muted)">Vous lisez déjà le copte ? Passez le test de niveau ou <button class="btn small" id="unlockAll">${S.unlockAll?'reverrouillez les cours':'débloquez tous les cours'}</button></p>`;
+  $('#cours').innerHTML=h;
+  $$('#cours [data-i]').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;if(unlocked(i))location.hash='cours-'+(i+1);else toast('Terminez d\'abord l\'étape précédente')});
+  $('#unlockAll').onclick=()=>{S.unlockAll=!S.unlockAll;save();renderCourseList()};
+  $('#viewBtn').onclick=()=>{S.listView=!S.listView;save();renderCourseList()};
+  $('#placeBtn').onclick=startPlacement;
+}
+let CL=0;
+function rowsTable(rows,title){return `<div class="card lblock">${title?`<h3>${title}</h3>`:''}<table class="ltbl">${rows.map(r=>`<tr><td class="cop">${r[0]}</td><td class="tr">${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table></div>`}
+function prayerHTML(p,cls){return `<div class="card prayer ${cls||''}"><h3>${p.title}</h3><div style="font-size:12px;margin:-4px 0 6px;color:${p.src?'var(--green)':'var(--muted)'}">${p.src?'✓ Texte vérifié dans le livret de la messe (p. '+p.src+')':'Texte hors livret : à faire relire'}</div>${p.lines.map(l=>`<div class="pl"><div class="cop c">${l[0]}</div><div class="t">${l[1]}</div><div class="f">${l[2]}</div></div>`).join('')}</div>`}
+function openLesson(i,mode){
+  CL=i;const c=COURSES[i];
+  $('#cours').innerHTML=`<a class="btn small" href="#cours">‹ Parcours</a>
+    <div class="pill" style="margin-top:14px">${UNITS[c.u]} · ${kind(c)} · étape ${i+1} / ${COURSES.length}</div>
+    <h1 style="margin-top:8px">${c.title}</h1><p class="lead">🎯 ${c.goal}</p>
+    <div class="ltabs"><button class="${mode!=='practice'?'on':''}" id="tL">1 · ${c.type==='checkpoint'?'Récapitulatif':'Apprendre'}</button><button class="${mode==='practice'?'on':''}" id="tP">2 · S'exercer (${c.type==='checkpoint'?15:10} q.)</button></div><div id="lbody"></div>`;
+  $('#tL').onclick=()=>openLesson(i,'learn');$('#tP').onclick=()=>openLesson(i,'practice');
+  if(mode==='practice'){const qs=c.type==='checkpoint'?buildCheckpoint(c):buildSession(c);runSession($('#lbody'),qs,{label:'Exercice',onNew:()=>openLesson(i,'practice'),onEnd:R=>finishLesson(c,i,R,qs)})}
+  else renderLearn(c);window.scrollTo(0,0);
+}
+function renderLearn(c){
+  const html=c.learn.map(b=>{
+    if(b.t==='p')return `<p class="lp">${b.h}</p>`;if(b.t==='tip')return `<div class="tip"><b>À retenir</b><br>${b.h}</div>`;
+    if(b.t==='table')return rowsTable(b.rows,b.title);if(b.t==='legend')return LEGEND(true);if(b.t==='prayer')return prayerHTML(b.p);
+    if(b.t==='letters')return `<div class="grid lcards">${LS(b.l).map(l=>`<div class="card lcard"><div class="cop big">${l[0]} ${l[1]}</div><b>${l[2]}</b> <span class="pill">${l[3]}</span><p>${l[4]}</p><p><span class="cop" style="font-size:22px;color:var(--ink)">${l[7]}</span> ${l[8]} = ${l[9]}</p></div>`).join('')}</div>`;
+    if(b.t==='checkpoint')return `<p class="lp">Ce bilan reprend toute l'unité « ${UNITS[c.u]} ». Revoyez les leçons où vous avez hésité :</p><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">${COURSES.map((x,i)=>[x,i]).filter(([x])=>x.u===c.u&&x.type!=='checkpoint').map(([x,i])=>`<a class="card crow" href="#cours-${i+1}" style="text-decoration:none;color:inherit"><div class="cn">${icon(x,lesson(i),true,i)}</div><div><b>${x.title}</b><p>${lesson(i).best!=null?'Meilleur score : '+lesson(i).best+' %':'Pas encore fait'}</p></div></a>`).join('')}</div>`;
+    return'';}).join('');
+  $('#lbody').innerHTML=html+`<div style="text-align:center;margin-top:24px"><button class="btn primary" style="font-size:17px;padding:12px 26px" onclick="openLesson(CL,'practice')">${c.type==='checkpoint'?'Passer le bilan ›':'Passer aux exercices ›'}</button></div>`;
+}
+function finishLesson(c,i,R,qs){
+  dailyDone();const pct=Math.round(100*R.score/R.n),st=lesson(i),pass=pct>=(c.type==='checkpoint'?80:70);
+  S.lessons[c.id]={done:st.done||pass,best:Math.max(st.best||0,pct)};const added=pass?addNewWords(c):0;save();
+  $('#lbody').innerHTML=`<div class="card" style="text-align:center"><div class="score">${pct} %</div><h2>${pass?(pct===100?'⭐ Sans faute !':c.type==='checkpoint'?'🏆 Unité validée !':'Étape réussie !'):'Presque !'}</h2>
+    <p style="color:var(--muted)">${R.score} bonne${R.score>1?'s':''} réponse${R.score>1?'s':''} sur ${R.n} du premier coup. ${pass?'L\'étape suivante est débloquée.':`Il faut ${c.type==='checkpoint'?80:70} % pour continuer.`}${added?`<br>📌 ${added} mot${added>1?'s':''} ajouté${added>1?'s':''} à vos révisions de demain.`:''}</p>
+    <div class="row" style="justify-content:center"><button class="btn" onclick="openLesson(CL,'learn')">Revoir la leçon</button><button class="btn" id="same">↻ Mêmes questions</button><button class="btn" onclick="openLesson(CL,'practice')">🔀 Nouvelles questions</button>${pass&&i+1<COURSES.length?`<a class="btn primary" href="#cours-${i+2}">Étape suivante ›</a>`:''}</div></div>${errorsHTML(R)}`;
+  $('#same').onclick=()=>runSession($('#lbody'),qs,{label:'Exercice',onNew:()=>openLesson(i,'practice'),onEnd:R2=>finishLesson(c,i,R2,qs)});
+}
+function addNewWords(c){const rows=[];c.learn.forEach(b=>{if(b.t==='table'&&b.mode!=='none'&&b.mode!=='read')rows.push(...b.rows)});let n=0;
+  for(const r of shuffle(rows)){if(n>=6)break;const q={q:'Que veut dire ceci ?',cop:r[0],o:[r[2],...rowDistract(r,rows.length>=3?rows:W,2,2)],w:`<span class="cop">${r[0]}</span> se lit « ${r[1]} » et veut dire « ${r[2]} ».`};
+    const k=revKey(q);if(S.review[k]||S.reviewDone[k])continue;addReview(q);const it=S.review[k];it.level=1;it.due=startOfDay(Date.now())+DAY;n++}return n}
+let PT=null;
+function startPlacement(){
+  const qs=[];UNITS.forEach((u,ui)=>{shuffle(COURSES.filter(c=>c.u===ui&&!c.type)).slice(0,2).forEach(c=>qs.push({...shuffle(buildSession(c).filter(q=>!q.type))[0],unit:ui}))});
+  $('#coursHead').style.display='none';
+  $('#cours').innerHTML=`<a class="btn small" href="#cours" onclick="setTimeout(route,0)">‹ Parcours</a><h1 style="margin-top:14px">Test de niveau</h1><p class="lead">${qs.length} questions, de la plus facile à la plus difficile. Les unités maîtrisées seront débloquées.</p><div id="lbody"></div>`;
+  const res={};runSession($('#lbody'),qs,{label:'Question',review:false,retryErrors:false,onAnswer:(q,ok)=>{const r=res[q.unit]||(res[q.unit]={ok:0,n:0});r.n++;if(ok)r.ok++},onEnd:()=>{
+    let placed=0;for(let u=0;u<UNITS.length;u++){const r=res[u];if(r&&r.ok===r.n)placed=u+1;else break}
+    S.placed=Math.max(S.placed||0,placed);save();const first=COURSES.findIndex(c=>c.u===Math.min(placed,UNITS.length-1));
+    $('#lbody').innerHTML=`<div class="card" style="text-align:center"><h2>${placed?`Vous pouvez commencer à l'unité ${Math.min(placed+1,UNITS.length)}`:'Commencez par le début'}</h2><div class="row" style="justify-content:center">${UNITS.map((u,ui)=>res[ui]?`<span class="pill ${res[ui].ok===res[ui].n?'ok':''}">U${ui+1} : ${res[ui].ok}/${res[ui].n}</span>`:'').join('')}</div><a class="btn primary" style="margin-top:16px" href="#cours-${first+1}">Aller à cette étape ›</a></div>`}});
+}
+
+/* =========================================================
+   ALPHABET
+   ========================================================= */
+function renderAlphabet(){
+  $('#letters').innerHTML=L.map(l=>`<div class="card lt ${l[5]==='démotique'?'demo':''} ${(S.known[l[1]]||0)>=3?'known':''}" data-l="${l[1]}"><div class="cop">${l[0]} ${l[1]}</div><div class="nm">${l[2]}</div><div class="tr">${l[3]}</div></div>`).join('');
+  $$('.lt').forEach(el=>el.onclick=()=>showLetter(el.dataset.l));
+}
+function showLetter(ch){
+  const l=letterOf(ch),ws=W.filter(w=>plain(w[0]).toLowerCase().includes(l[1])).slice(0,8),d=$('#detail');
+  d.innerHTML=`<div class="dgrid"><div class="cop dbig">${l[0]}${l[1]}</div><div>
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0">${l[2]}</h2><button class="btn small" onclick="$('#detail').classList.remove('show')">Fermer ✕</button></div>
+    <p><span class="pill">${l[3]}</span> ${l[4]}</p>
+    <p style="font-size:14px;color:var(--muted)">Origine : ${l[5]==='grec'?'alphabet grec':'écriture égyptienne démotique'}${l[6]?` · valeur de chiffre : <b>${l[6]}</b> (<span class="cop">${l[1]}̅</span>)`:''}</p>
+    <div class="tip" style="margin:8px 0"><span class="cop" style="font-size:26px">${l[7]}</span> <b>${l[8]}</b> — ${l[9]}</div>
+    <div class="row"><button class="btn primary" onclick="decodeLetter('${l[1]}')">📖 Lire des mots avec ${l[1]}</button></div></div></div>
+    ${ws.length?`<div style="margin-top:14px"><b>Mots avec ${l[1]}</b><div class="lwgrid">${ws.map(w=>`<div class="lw"><span class="cop">${w[0]}</span><b>${w[1]}</b><small>${w[2]}</small></div>`).join('')}</div></div>`:''}`;
+  d.classList.add('show');d.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* =========================================================
+   LIRE : déchiffrage, cartes, dictionnaire
+   ========================================================= */
+function decompose(word){
+  const items=[];const chars=[...word.normalize('NFD')];
+  for(let i=0;i<chars.length;i++){const ch=chars[i];
+    if(MARKS.test(ch)){if(items.length)items[items.length-1].marks+=ch;continue}
+    if(ch===' '){items.push({space:1});continue}
+    const low=ch.toLowerCase();
+    if(low==='ⲟ'&&chars[i+1]&&chars[i+1].toLowerCase()==='ⲩ'){items.push({g:ch+chars[i+1],marks:'',name:'O + He',sound:'ou',note:'le groupe ⲟⲩ se lit « ou »'});i++;continue}
+    const l=letterOf(ch);items.push({g:ch,marks:'',name:l?l[2]:ch,sound:l?l[3].split(' ')[0]:'',note:''});
+  }
+  const VOW='ⲁⲉⲏⲓⲟⲩⲱ';
+  items.forEach((it,i)=>{if(!it.space&&it.g&&it.g.toLowerCase()==='ⲃ'){const nx=items[i+1];if(!nx||nx.space||!VOW.includes((nx.g||'')[0].toLowerCase())){it.sound='b';it.note='« b » en fin de mot ou devant une consonne'}}});
+  items.forEach(it=>{if(!it.space&&it.marks){if(it.marks.includes('̀')){it.note='jinkim : « e » ajouté devant';it.sound='e'+it.sound}if(it.marks.includes('̅'))it.note='barre : abréviation ou chiffre'}});
+  return items;
+}
+function decompHTML(w,upto){let k=0;return `<div class="decomp">${decompose(w).map(x=>{if(x.space)return'<span style="width:18px"></span>';const s=upto===undefined||k<upto;k++;return`<div class="dchip ${s?'':'hide'}"><div class="cop g">${x.g}${x.marks}</div><b>${x.name}</b><span>${x.sound}</span>${x.note?`<small>${x.note}</small>`:''}</div>`}).join('')}</div>`}
+let DEC={letter:'',deck:[],cur:null,k:0};
+function decPool(){return W.filter(w=>!DEC.letter||plain(w[0]).toLowerCase().includes(DEC.letter))}
+function decNext(){if(!DEC.deck.length)DEC.deck=shuffle(decPool());DEC.cur=DEC.deck.pop();DEC.k=0;renderDec()}
+function renderDec(){const w=DEC.cur;if(!w){$('#decBox').innerHTML='Aucun mot.';return}
+  const n=decompose(w[0]).filter(x=>!x.space).length,done=DEC.k>=n;
+  $('#decBox').innerHTML=`<div class="cop decword">${w[0]}</div>${decompHTML(w[0],DEC.k)}
+    <div class="reveal">${done?`<div class="tr">${w[1]}</div><div class="fr">${w[2]}</div>`:`<small style="color:var(--muted)">De gauche à droite : ${DEC.k} / ${n}</small>`}</div>
+    <div class="row" style="justify-content:center">${done?'':'<button class="btn primary" id="dStep">Lettre suivante ›</button><button class="btn" id="dAll">Tout montrer</button>'}<button class="btn ${done?'primary':''}" id="dNext">Mot suivant ›</button></div>`;
+  const s=$('#dStep');if(s)s.onclick=()=>{DEC.k++;if(DEC.k>=n){S.words[w[0]]=true;save()}renderDec()};
+  const a=$('#dAll');if(a)a.onclick=()=>{DEC.k=n;renderDec()};$('#dNext').onclick=decNext;
+}
+function initDec(){$('#decFilters').innerHTML=`<select id="decL"><option value="">Tous les mots</option>${L.filter(l=>l[1]!=='ⲋ').map(l=>`<option value="${l[1]}" ${DEC.letter===l[1]?'selected':''}>Mots avec ${l[1]} (${l[2]})</option>`).join('')}</select>`;
+  $('#decL').onchange=e=>{DEC.letter=e.target.value;DEC.deck=[];decNext()}}
+function decodeLetter(ch){DEC.letter=ch;DEC.deck=[];location.hash='lire';initDec();decNext()}
+let deck=[],cur=null,wcat='Tous';
+function renderWcats(){$('#wcats').innerHTML=['Tous',...WCATS].map(c=>`<button class="btn small ${c===wcat?'on':''}" data-wc="${c}">${c}</button>`).join('');$$('[data-wc]').forEach(b=>b.onclick=()=>{wcat=b.dataset.wc;deck=[];renderWcats();nextWord()})}
+function nextWord(){const base=wcat==='Tous'?W:W.filter(w=>w[3]===wcat);if(!deck.length){const t=base.filter(w=>!S.words[w[0]]);deck=shuffle(t.length?t:base)}cur=deck.pop();
+  $('#flashWord').textContent=cur[0];$('#flashReveal').innerHTML='';$('#flashCount').textContent=Object.values(S.words).filter(Boolean).length+' / '+W.length+' mots lus'}
+$('#fRev').onclick=()=>{$('#flashReveal').innerHTML=`<div class="tr">${cur[1]}</div><div class="fr">${cur[2]}</div>`};
+$('#fYes').onclick=()=>{S.words[cur[0]]=true;save();nextWord()};$('#fNo').onclick=()=>{S.words[cur[0]]=false;save();nextWord()};
+const norm=t=>plain(t).toLowerCase().replace(/[ʿʾ'’\-()«»]/g,'');
+const DICT=[...W.map(w=>({c:w[0],t:w[1],f:w[2],cat:w[3]})),...P.map(p=>({c:p[1],t:p[2],f:p[3],cat:p[0]})),...PRAYERS.flatMap(p=>p.lines.map(l=>({c:l[0],t:l[1],f:l[2],cat:p.title})))].map(e=>({...e,k:norm(e.c+' '+e.t+' '+e.f)}));
+$('#dictQ').oninput=()=>{const q=norm($('#dictQ').value);if(q.length<2){$('#dictRes').innerHTML='';return}
+  const r=DICT.filter(e=>e.k.includes(q)).slice(0,24);$('#dictRes').innerHTML=r.length?r.map(e=>`<div class="card dres"><div class="cop">${e.c}</div><div class="tr">${e.t}</div><div>${e.f}</div><small>${e.cat}</small></div>`).join(''):'<p style="color:var(--muted)">Aucun résultat.</p>'};
+
+/* =========================================================
+   PRIÈRES ET PHRASES
+   ========================================================= */
+let pcat='Prières',hideMode='';
+function renderPrieres(){
+  const cats=['Prières',...new Set(P.map(p=>p[0]))];
+  $('#pcats').innerHTML=cats.map(c=>`<button class="btn small ${c===pcat?'on':''}" data-pc="${c}">${c}</button>`).join('')
+    +(pcat==='Prières'?`<span style="width:12px"></span><select id="hideSel"><option value="">Tout afficher</option><option value="hidefr" ${hideMode==='hidefr'?'selected':''}>Cacher la traduction</option><option value="hidetr" ${hideMode==='hidetr'?'selected':''}>Cacher la transcription</option></select>`:'');
+  $$('[data-pc]').forEach(b=>b.onclick=()=>{pcat=b.dataset.pc;renderPrieres()});
+  const hs=$('#hideSel');if(hs)hs.onchange=e=>{hideMode=e.target.value;renderPrieres()};
+  if(pcat==='Prières'){$('#pbody').innerHTML=`<div class="grid">${PRAYERS.map(p=>prayerHTML(p,hideMode)).join('')}</div>`;
+    $$('.prayer .t,.prayer .f').forEach(el=>el.onclick=()=>el.style.filter='none');return}
+  $('#pbody').innerHTML=`<div class="grid phr">${P.map((p,i)=>[p,i]).filter(([p])=>p[0]===pcat).map(([p,i])=>`<div class="card ph ${S.said['p'+i]?'done':''}"><div class="cop">${p[1]}</div><div class="tr">${p[2]}</div><div class="fr">${p[3]}</div><button class="btn small ${S.said['p'+i]?'primary':''}" data-sd="${i}">${S.said['p'+i]?'Je la comprends ✓':'Je la comprends'}</button></div>`).join('')}</div>`;
+  $$('[data-sd]').forEach(b=>b.onclick=()=>{const k='p'+b.dataset.sd;S.said[k]=!S.said[k];save();renderPrieres()});
+}
+
+/* =========================================================
+   RÉVISIONS (répétition espacée)
+   ========================================================= */
+const REV=[0,1,3,7,14];
+const revKey=q=>((q.cop||'')+'|'+q.q.replace(/^Révision · /,'')+'|'+(q.ans||q.o[0])).slice(0,300);
+function addReview(q){const k=revKey(q),now=Date.now(),a=q.ans||q.o[0];
+  S.review[k]={q:q.q.replace(/^Révision · /,''),cop:q.cop||'',copO:q.copO?1:0,w:q.w||'',ans:a,o:[a,...(q.opts||q.o).filter(x=>x!==a)],level:0,due:now,updated:now};delete S.reviewDone[k]}
+function reviewResult(k,ok){const it=S.review[k];if(!it)return;const now=Date.now();
+  if(ok){it.level++;if(it.level>=REV.length){delete S.review[k];S.reviewDone[k]=now;toast('Élément maîtrisé !');return}it.due=startOfDay(now)+REV[it.level]*DAY}else{it.level=0;it.due=now}it.updated=now}
+const dueReviews=()=>Object.entries(S.review).filter(([,v])=>v.due<=Date.now());
+function renderRevBadge(){const n=dueReviews().length,b=$('#revBadge');b.textContent=n;b.style.display=n?'':'none'}
+function renderRevisions(){
+  renderRevBadge();const all=Object.entries(S.review).sort((a,b)=>a[1].due-b[1].due),due=dueReviews();
+  const fmt=t=>{const d=Math.round((startOfDay(t)-startOfDay(Date.now()))/DAY);return d<=0?'<b style="color:var(--gold)">aujourd\'hui</b>':d===1?'demain':`dans ${d} jours`};
+  $('#revBody').innerHTML=`<div class="card ctop"><div style="flex:1"><h2 style="margin:0">${due.length?due.length+' à revoir aujourd\'hui':'Rien à revoir aujourd\'hui ✓'}</h2><p style="margin:4px 0 0;color:var(--muted)">${all.length} en cours · ${Object.keys(S.reviewDone).length} maîtrisés</p></div>${due.length?`<button class="btn primary" id="revGo">Réviser (${Math.min(10,due.length)}) ›</button>`:''}</div>
+    <div id="revRun"></div><h3 style="margin-top:22px">Mes mots à revoir</h3>
+    ${all.length?`<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(250px,1fr))">${all.map(([k,v])=>`<div class="card">${v.cop?`<div class="cop" style="font-size:26px">${v.cop}</div>`:''}<div style="font-size:14px;color:var(--muted)">${v.q}</div><div>Réponse : <b>${v.copO?`<span class="cop">${v.ans}</span>`:v.ans}</b></div><small>${'●'.repeat(v.level)}${'○'.repeat(REV.length-v.level)} · ${fmt(v.due)}</small></div>`).join('')}</div>`:'<p style="color:var(--muted)">Vos erreurs apparaîtront ici.</p>'}`;
+  const g=$('#revGo');if(g)g.onclick=()=>{const items=shuffle(dueReviews()).slice(0,10).map(([k,v])=>({...v,key:k}));
+    runSession($('#revRun'),items,{label:'Révision',review:false,retryErrors:false,onAnswer:(q,ok)=>{reviewResult(q.key,ok);save()},onEnd:R=>{dailyDone();renderRevisions();$('#revRun').innerHTML=`<div class="card" style="text-align:center;margin-top:14px"><div class="score">${R.score} / ${R.n}</div><p>Révision terminée.</p></div>`}})};
+}
+
+/* =========================================================
+   QUIZ
+   ========================================================= */
+const allRows=()=>W.map(w=>[w[0],w[1],w[2]]);
+const prayerRows=()=>PRAYERS.flatMap(p=>p.lines);
+const QGEN={
+ mix:()=>shuffle([...shuffle(QGEN.sound()).slice(0,2),...shuffle(QGEN.word()).slice(0,2),...shuffle(QGEN.read()).slice(0,2),...shuffle(QGEN.nums()).slice(0,1),...shuffle(QGEN.gap()).slice(0,1),...shuffle(QGEN.phrase()).slice(0,1),pairsQ(allRows())].filter(Boolean).concat(shuffle(QGEN.word()).slice(0,1))).slice(0,10),
+ sound:()=>shuffle(letterQs(L.filter(l=>l[1]!=='ⲋ')).filter(q=>q.q.startsWith('Quel son'))).sort((a,b)=>(S.known[a.letter]||0)-(S.known[b.letter]||0)).slice(0,10),
+ letter:()=>shuffle(letterQs(L.filter(l=>l[1]!=='ⲋ')).filter(q=>q.q.startsWith('Quelle lettre'))).slice(0,10),
+ caseq:()=>shuffle(letterQs(L.filter(l=>l[1]!=='ⲋ')).filter(q=>q.q.startsWith('Quelle est la minuscule'))).slice(0,10),
+ name:()=>shuffle(letterQs(L.filter(l=>l[1]!=='ⲋ')).filter(q=>q.q.startsWith('Comment s\'appelle'))).slice(0,10),
+ read:()=>shuffle(W).slice(0,10).map(w=>({q:'Comment se lit ce mot ?',cop:w[0],o:[w[1],...distract(w[1],W.map(x=>x[1]),3)],w:`Lettre par lettre : ${decompose(w[0]).filter(x=>!x.space).map(x=>x.name+' → '+x.sound).join(' · ')}. Donc « ${w[1]} » = ${w[2]}.`})),
+ word:()=>shuffle(W).slice(0,10).map(w=>({q:'Que veut dire ce mot ?',cop:w[0],o:[w[2],...distract(w[2],W.map(x=>x[2]),3)],w:`<span class="cop">${w[0]}</span> (${w[1]}) = ${w[2]}.`})),
+ frword:()=>shuffle(W).slice(0,10).map(w=>({q:`Comment dit-on « ${w[2]} » ?`,o:[w[0],...distract(w[0],W.map(x=>x[0]),3)],copO:1,w:`« ${w[2]} » = <span class="cop">${w[0]}</span> (${w[1]}).`})),
+ nums:()=>shuffle(NUMS).slice(0,10).map(n=>Math.random()<.5?{q:'Quel nombre est-ce ?',cop:n[0],o:[String(n[2]),...distract(String(n[2]),NUMS.map(x=>String(x[2])),3)],w:`<span class="cop">${n[0]}</span> (${n[1]}) = ${n[2]}, chiffre <span class="cop">${n[3]}</span>.`}:{q:'Que vaut ce chiffre-lettre ?',cop:n[3],o:[String(n[2]),...distract(String(n[2]),NUMS.map(x=>String(x[2])),3)],w:`<span class="cop">${n[3]}</span> = ${n[2]} (${n[1]}).`}),
+ pairs:()=>[...Array(10)].map(()=>pairsQ(allRows())).filter(Boolean),
+ order:()=>shuffle([...prayerRows(),...P.map(p=>[p[1],p[2],p[3]])].filter(r=>r[0].split(' ').length>=2)).slice(0,10).map(r=>orderQ(r,[...prayerRows(),...P.map(p=>[p[1],p[2],p[3]])])).filter(Boolean),
+ gap:()=>shuffle(prayerRows().filter(r=>r[0].split(' ').length>=2)).slice(0,10).map(r=>gapQ(r,prayerRows())).filter(Boolean),
+ phrase:()=>shuffle([...P.map(p=>[p[1],p[2],p[3]]),...prayerRows()]).slice(0,10).map(r=>({q:'Que veut dire ceci ?',cop:r[0],o:[r[2],...distract(r[2],[...P.map(p=>p[3]),...prayerRows().map(x=>x[2])],3)],w:`<span class="cop">${r[0]}</span> (${r[1]}) = ${r[2]}.`})),
+};
+const QMODES=[['mix','🎲 Défi mélangé'],['sound','Lettre → son'],['letter','Son → lettre'],['caseq','Majuscule → minuscule'],['name','Nom des lettres'],['read','Lire un mot'],['word','Mot → sens'],['nums','Nombres'],['pairs','Associer les paires'],['gap','Prières à trous'],['phrase','Phrases et prières']];
+let QM='mix',QQ=[];
+function renderQModes(){$('#qmodes').innerHTML=QMODES.map(([k,t])=>`<button class="btn ${k===QM?'on':''}" data-q="${k}">${t}</button>`).join('');$$('[data-q]').forEach(b=>b.onclick=()=>{QM=b.dataset.q;renderQModes();startQuiz()})}
+function startQuiz(same){
+  if(!same)QQ=QGEN[QM]().slice(0,10);
+  runSession($('#qbox'),QQ,{label:'Question',onNew:()=>startQuiz(),onAnswer:(q,ok)=>{if(q.letter){S.known[q.letter]=Math.max(0,(S.known[q.letter]||0)+(ok?1:-1))}},onEnd:R=>{
+    S.best[QM]=Math.max(S.best[QM]||0,R.score);dailyDone();
+    $('#qbox').innerHTML=`<div class="card qbox"><div class="score">${R.score} / ${R.n}</div><p>${R.score>=9?'Remarquable !':R.score>=7?'Très bien !':R.score>=5?'Bon début.':'Revoyez les cours puis retentez.'}</p>
+      <div class="row" style="justify-content:center"><button class="btn" id="qs">↻ Mêmes questions</button><button class="btn primary" id="qn">🔀 Nouvelles questions</button></div>${errorsHTML(R)}</div>`;
+    $('#qs').onclick=()=>startQuiz(true);$('#qn').onclick=()=>startQuiz()}});
+}
+
+/* =========================================================
+   OBJECTIF DU JOUR, STATISTIQUES
+   ========================================================= */
+function dailyDone(){const k=todayKey(),b=S.days[k]||0;S.days[k]=b+1;if(b<S.goal&&S.days[k]>=S.goal)setTimeout(()=>toast('🔥 Objectif du jour atteint ! Série : '+streak()+' jour(s)'),300);save()}
+function streak(){let n=0,d=new Date();if((S.days[todayKey(d)]||0)<S.goal)d.setDate(d.getDate()-1);while((S.days[todayKey(d)]||0)>=S.goal){n++;d.setDate(d.getDate()-1)}return n}
+function renderStats(){
+  const st=streak(),done=S.days[todayKey()]||0,due=dueReviews().length;
+  const week=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return{l:'DLMMJVS'[d.getDay()],ok:(S.days[todayKey(d)]||0)>=S.goal,td:i===6}});
+  $('#daily').innerHTML=`<div class="card daily"><div class="dstreak"><div style="font-size:40px">🔥</div><div><b>${st}</b> jour${st>1?'s':''}<br><small>de suite</small></div></div>
+    <div style="flex:1;min-width:220px"><b>Objectif du jour :</b> ${done>=S.goal?'atteint ✓':done+' / '+S.goal}<div class="meter" style="height:10px"><i style="width:${Math.min(100,Math.round(100*done/S.goal))}%"></i></div>
+    <div class="week">${week.map(w=>`<span class="${w.ok?'ok':''} ${w.td?'td':''}">${w.l}</span>`).join('')}</div>
+    <small style="color:var(--muted)">Une série = un exercice de cours, un quiz ou une révision terminés. Objectif : <select id="goalSel">${[1,2,3,5].map(g=>`<option value="${g}" ${g===S.goal?'selected':''}>${g} par jour</option>`).join('')}</select></small></div>
+    <div class="row" style="flex-direction:column;align-items:stretch">${due?`<a class="btn primary" href="#revisions">${due} à revoir ›</a>`:''}<a class="btn" href="#cours-${nextLesson()+1}">Continuer les cours</a></div></div>`;
+  $('#goalSel').onchange=e=>{S.goal=+e.target.value;save()};
+  const k=L.filter(l=>(S.known[l[1]]||0)>=3).length,w=Object.values(S.words).filter(Boolean).length;
+  $('#stats').innerHTML=[[k,31,'lettres maîtrisées'],[w,W.length,'mots lus'],[doneCount(),COURSES.length,'étapes terminées'],[Object.keys(S.reviewDone).length,Math.max(1,Object.keys(S.reviewDone).length+Object.keys(S.review).length),'révisions acquises']].map(([a,b,t])=>`<div class="card stat"><b>${a}</b><span>${t}</span><div class="meter"><i style="width:${Math.round(100*a/b)}%"></i></div></div>`).join('');
+  $('#hdrStreak').textContent='🔥 '+st;renderRevBadge();
+  const hg=$('#heroGo');hg.textContent=doneCount()?'Continuer les cours':'Commencer les cours';hg.href='#cours-'+(nextLesson()+1);
+}
+
+/* =========================================================
+   SYNCHRONISATION (progression privée, par personne)
+   ========================================================= */
+let SY={ref:null,state:'local',timer:null,writing:false,again:false};
+function mergeState(a,b){const mx=(x,y)=>{const o={...(x||{})};for(const k in (y||{}))o[k]=Math.max(o[k]||0,y[k]||0);return o},or=(x,y)=>{const o={...(x||{})};for(const k in (y||{}))o[k]=o[k]||y[k];return o};
+  const r={...a,known:mx(a.known,b.known),best:mx(a.best,b.best),days:mx(a.days,b.days),words:or(a.words,b.words),said:or(a.said,b.said),reviewDone:mx(a.reviewDone,b.reviewDone)};
+  r.lessons={...(a.lessons||{})};for(const k in (b.lessons||{})){const x=r.lessons[k]||{},y=b.lessons[k];r.lessons[k]={done:!!(x.done||y.done),best:Math.max(x.best||0,y.best||0)}}
+  r.review={};for(const src of [a.review||{},b.review||{}])for(const k in src){const it=src[k];if((r.reviewDone[k]||0)>=it.updated)continue;if(!r.review[k]||r.review[k].updated<it.updated)r.review[k]=it}
+  r.placed=Math.max(a.placed||0,b.placed||0);r.unlockAll=!!(a.unlockAll||b.unlockAll);return r}
+function renderSync(){const m={local:'Progression enregistrée sur cet appareil uniquement.',off:'Synchronisation désactivée : progression gardée sur cet appareil.',wait:'Connexion à votre compte…',ok:'✓ Progression synchronisée sur vos appareils (privée, rien qu\'à vous).',err:'Synchronisation impossible pour le moment.'}[SY.state];
+  $('#syncBox').innerHTML=`<span>${m}</span><label><input type="checkbox" id="syncChk" ${S.sync?'checked':''}> Synchroniser entre mes appareils</label>`;
+  $('#syncChk').onchange=e=>{S.sync=e.target.checked;try{localStorage.setItem('aspi-v1',JSON.stringify(S))}catch(_){}if(S.sync)initSync();else{SY.state='off';renderSync()}}}
+async function initSync(){if(!S.sync){SY.state='off';renderSync();return}if(!window.claude||!claude.use){SY.state='local';renderSync();return}
+  SY.state='wait';renderSync();const to=setTimeout(()=>{if(SY.state==='wait'){SY.state='local';renderSync()}},10000);
+  try{const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);const id=user&&await user.id();clearTimeout(to);
+    if(!db||!id){SY.state='local';renderSync();return}SY.ref=db.doc('data/users/'+id+'/progress');await pullSync();
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&S.sync)pullSync()})}catch(e){clearTimeout(to);SY.state='err';renderSync()}}
+async function pullSync(){try{const s=await SY.ref.get();if(s.exists){S=mergeState(S,JSON.parse((s.data()||{}).json||'{}'));try{localStorage.setItem('aspi-v1',JSON.stringify(S))}catch(_){}renderStats();route()}
+  SY.state='ok';renderSync();if(!s.exists||JSON.stringify(S)!==(s.data()||{}).json)queueSync(0)}catch(e){SY.state='err';renderSync()}}
+function queueSync(d){if(!SY.ref||!S.sync)return;clearTimeout(SY.timer);SY.timer=setTimeout(pushSync,d===undefined?2000:d)}
+async function pushSync(){if(SY.writing){SY.again=true;return}SY.writing=true;try{await SY.ref.set({json:JSON.stringify(S),updated:Date.now()})}catch(e){SY.state='err';renderSync()}SY.writing=false;if(SY.again){SY.again=false;queueSync()}}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+const VIEWS=['accueil','cours','alphabet','lire','prieres','revisions','quiz'];
+function route(){
+  const h=(location.hash||'#accueil').slice(1),lm=h.match(/^cours-(\d+)$/),v=lm?'cours':VIEWS.includes(h)?h:'accueil';
+  $$('section.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));$$('#nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+v));
+  if(v==='cours'){const li=lm?Math.min(COURSES.length,Math.max(1,+lm[1]))-1:-1;$('#coursHead').style.display=li<0?'':'none';if(li<0)renderCourseList();else if(!unlocked(li)){location.hash='cours';return}else openLesson(li,'learn')}
+  if(v==='revisions')renderRevisions();if(v==='quiz'&&!$('#qbox').innerHTML)startQuiz();if(v==='alphabet')renderAlphabet();if(v==='prieres')renderPrieres();
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',route);
+window.addEventListener('error',e=>toast('Erreur : '+e.message));
+$('#legAlpha').innerHTML=LEGEND(false);
+tickClock();setInterval(tickClock,15000);
+
+/* ---- Franco (prononciation en lettres latines) ---- */
+const FRANCO=S.franco!==false;
+const frC=t=>String(t).replace(/kh/g,'5').replace(/Kh/g,'5').replace(/ph/g,'f').replace(/Ph/g,'F').replace(/ē/g,'i').replace(/Ē/g,'I').replace(/ō/g,'ô').replace(/Ō/g,'Ô');
+const FR_LEGEND=[['ϧ ⲭ','5','« kh » raclé, comme le خ arabe (le 5 du franco égyptien)','ϧⲉⲛ','khen','dans'],['ⲏ','i','se lit « i » à l\'église','ⲁ̀ⲙⲏⲛ','amēn','amen'],['ⲱ','ô','« o » long','ⲓⲱⲧ','iōt','père'],['ⲫ','f','« f » à l\'église','ⲫⲉ','phe','ciel'],['ϣ','sh','« ch » de chat','ϣⲏⲣⲓ','shēri','fils'],['ϭ','ch','« tch » de tchèque','ⲡϭⲟⲓⲥ','pchois','le Seigneur'],['ϫ','j','« dj » de djinn','ϫⲓϫ','jij','main'],['ⲟⲩ','ou','comme en français','ⲟⲩⲣⲟ','ouro','roi'],['ⲑ','th','« th » (ou « t »)','ⲉⲑⲟⲩⲁⲃ','ethouab','saint']];
+function frLegendHTML(){return `<table style="width:100%;border-collapse:collapse">${FR_LEGEND.map(r=>`<tr style="border-bottom:1px solid #e5dcc8"><td class="cop" style="font-size:24px;padding:4px 8px">${r[0]}</td><td style="font-size:22px;font-weight:800;color:var(--main);padding:4px 8px;white-space:nowrap">${r[1]}</td><td style="padding:4px 8px">${r[2]}<br><small>ex. <span class="cop" style="font-size:20px">${r[3]}</span> = <b>${frC(r[4])}</b> (${r[5]})</small></td></tr>`).join('')}</table>`}
+const frDone=new WeakSet();const frRow=(r,i)=>{if(r&&!frDone.has(r)&&typeof r[i]==='string'){frDone.add(r);r[i]=frC(r[i])}};
+if(FRANCO){
+  W.forEach(w=>frRow(w,1));P.forEach(p=>frRow(p,2));NUMS.forEach(n=>frRow(n,1));PRAYERS.forEach(p=>p.lines.forEach(l=>frRow(l,1)));L.forEach(l=>frRow(l,8));
+  COURSES.forEach(c=>c.learn.forEach(b=>{if(b.t==='table'&&b.rows&&b.mode!=='none')b.rows.forEach(r=>{if(Array.isArray(r)&&r.length>=3&&/^[a-zēō][^\u2C80-\u2CFF\u03E2-\u03EF0-9]*$/.test(r[1]||''))frRow(r,1)})}));
+  DICT.forEach(e=>{const o=e.t;e.t=frC(o);e.k=norm(e.c+' '+o+' '+e.t+' '+e.f)});
+  const MARK=/[ēĒōŌ]|kh|ph/,TOK=/[A-Za-zēĒōŌ]+/;
+  const frNode=n=>{const v=n.nodeValue;if(!v||!/[ēĒōŌ]/.test(v))return;const p=n.parentNode;if(!p||/^(SCRIPT|STYLE|TEXTAREA)$/.test(p.nodeName)||(p.closest&&p.closest('.nofr')))return;
+    const nv=v.replace(/[A-Za-zēĒōŌ\-]+/g,t=>/[ēĒōŌ]/.test(t)?frC(t):t);if(nv!==v)n.nodeValue=nv};
+  const frWalk=r=>{const w=document.createTreeWalker(r,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode())frNode(n)};
+  frWalk(document.body);
+  new MutationObserver(ms=>ms.forEach(m=>{if(m.type==='characterData')frNode(m.target);else m.addedNodes.forEach(n=>n.nodeType===3?frNode(n):n.nodeType===1&&frWalk(n))})).observe(document.body,{childList:true,subtree:true,characterData:true});
+}
+$('#v-accueil').insertAdjacentHTML('beforeend',`<div class="card" id="frCard" style="margin-top:16px"><h3 style="margin-top:0">✍️ La prononciation en franco</h3>
+  <p>${FRANCO?'Les prononciations sont écrites <b>en franco</b>, comme les Coptes d\'Égypte écrivent leurs hymnes sur téléphone : <b>5</b> pour ϧ, <b>i</b> pour ⲏ, <b>f</b> pour ⲫ… C\'est la prononciation entendue à l\'église.':'Les prononciations sont écrites <b>en transcription classique</b> <span class="nofr">(ē, ō, kh, ph)</span>.'}</p>${frLegendHTML()}
+  <button class="btn nofr ${FRANCO?'':'primary'}" id="frTog" style="margin-top:12px">${FRANCO?'Revenir à la transcription classique (ē, ō, kh)':'Écrire la prononciation en franco (5, i, f…)'}</button></div>`);
+$('#v-alphabet').insertAdjacentHTML('beforeend',`<div class="card" style="margin-top:16px"><h3 style="margin-top:0">Le franco en un coup d'œil</h3>${frLegendHTML()}</div>`);
+$('#frTog').onclick=()=>{S.franco=!FRANCO;save();location.reload()};
+renderAlphabet();initDec();decNext();renderWcats();nextWord();renderQModes();
+renderStats();route();renderSync();initSync();
+</script>
+<script>
+/* Version GitHub : pas de compte Claude, la progression reste sur l'appareil */
+if(!window.claude||!window.claude.use){renderSync=function(){const el=document.getElementById('syncBox');if(el)el.innerHTML='<span>Progression enregistrée sur cet appareil (dans ce navigateur).</span>'};renderSync()}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('../sw.js',{scope:'../'}).catch(()=>{});
+</script>
+</body>
+</html>
